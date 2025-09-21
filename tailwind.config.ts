@@ -57,6 +57,13 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        parking: {
+          available: "hsl(var(--parking-available))",
+          occupied: "hsl(var(--parking-occupied))",
+          vip: "hsl(var(--parking-vip))",
+          ev: "hsl(var(--parking-ev))",
+          gate: "hsl(var(--parking-gate))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

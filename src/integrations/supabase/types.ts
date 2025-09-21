@@ -14,7 +14,101 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          contact_number: string
+          created_at: string
+          email: string
+          entry_time: string
+          exit_time: string | null
+          id: string
+          payment_amount: number
+          payment_method: string
+          plan_type: string
+          spot_id: number
+          status: string
+          updated_at: string
+          user_name: string
+          vehicle_number: string
+          vehicle_type: string
+        }
+        Insert: {
+          contact_number: string
+          created_at?: string
+          email: string
+          entry_time?: string
+          exit_time?: string | null
+          id?: string
+          payment_amount: number
+          payment_method: string
+          plan_type: string
+          spot_id: number
+          status?: string
+          updated_at?: string
+          user_name: string
+          vehicle_number: string
+          vehicle_type: string
+        }
+        Update: {
+          contact_number?: string
+          created_at?: string
+          email?: string
+          entry_time?: string
+          exit_time?: string | null
+          id?: string
+          payment_amount?: number
+          payment_method?: string
+          plan_type?: string
+          spot_id?: number
+          status?: string
+          updated_at?: string
+          user_name?: string
+          vehicle_number?: string
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_spot_id_fkey"
+            columns: ["spot_id"]
+            isOneToOne: false
+            referencedRelation: "parking_spots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parking_spots: {
+        Row: {
+          created_at: string
+          floor_level: number
+          id: number
+          is_occupied: boolean
+          section: string
+          spot_number: string
+          spot_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          floor_level?: number
+          id?: number
+          is_occupied?: boolean
+          section?: string
+          spot_number: string
+          spot_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          floor_level?: number
+          id?: number
+          is_occupied?: boolean
+          section?: string
+          spot_number?: string
+          spot_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
