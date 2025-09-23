@@ -14,8 +14,66 @@ interface ParkingReceiptProps {
 export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptProps) => {
   const entryTime = new Date(booking.entry_time);
 
-  const handlePrint = () => {
-    window.print();
+  const handleDownload = () => {
+    // Create a printable version of the receipt
+    const receiptContent = `
+PARKVUE - Parking Receipt
+========================
+
+Booking Confirmed!
+Your parking spot has been reserved
+
+PARKING LOCATION: ${spot.spot_number}
+Floor ${spot.floor_level} • Section ${spot.section}
+
+BOOKING DETAILS:
+- Booking ID: ${booking.id.slice(0, 8).toUpperCase()}
+- Vehicle Number: ${booking.vehicle_number}
+- Vehicle Type: ${booking.vehicle_type.replace('wheeler', '-Wheeler')}
+- Plan Type: ${plan.name}
+
+TIMING INFORMATION:
+- Entry Time: ${entryTime.toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short', 
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })}
+- Status: Active
+
+PAYMENT SUMMARY:
+- Plan Cost: ₹${plan.price}
+- Service Charge: ₹10
+- Total Paid: ₹${booking.payment_amount + 10}
+- Payment Method: ${booking.payment_method === 'card' ? 'Card Payment' : 'Online Payment'}
+
+CUSTOMER INFORMATION:
+- Name: ${booking.user_name}
+- Contact: ${booking.contact_number}
+- Email: ${booking.email}
+
+IMPORTANT INSTRUCTIONS:
+• Keep this receipt with you at all times
+• Note your parking location: ${spot.spot_number}
+• For exit, use the same contact details for verification
+• Contact support if you need assistance
+
+Generated on: ${new Date().toLocaleString('en-IN')}
+========================
+PARKVUE - Smart Parking Solution
+    `;
+
+    // Create and download the file
+    const blob = new Blob([receiptContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `parking-receipt-${booking.id.slice(0, 8)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   };
 
   return (
@@ -148,9 +206,9 @@ export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptP
             </div>
 
             <div className="flex gap-4 pt-4">
-              <Button variant="outline" onClick={handlePrint} className="flex-1">
+              <Button variant="outline" onClick={handleDownload} className="flex-1">
                 <Download className="mr-2 h-4 w-4" />
-                Print Receipt
+                Download Receipt
               </Button>
               <Button onClick={onClose} className="flex-1">
                 Proceed to Gate

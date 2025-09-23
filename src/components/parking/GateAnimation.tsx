@@ -33,29 +33,67 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
             <p className="text-gray-300">Welcome to Smart Parking</p>
           </div>
 
-          {/* Gate Animation */}
-          <div className="relative h-32 mb-6 bg-gray-700 rounded-lg overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-white text-sm">ENTRY GATE</div>
+          {/* Realistic Gate Animation */}
+          <div className="relative h-40 mb-6 bg-gradient-to-b from-gray-600 to-gray-800 rounded-lg overflow-hidden border-4 border-gray-500">
+            {/* Gate Frame */}
+            <div className="absolute inset-0">
+              <div className="absolute top-2 left-2 right-2 h-6 bg-gray-900 rounded flex items-center justify-center">
+                <div className="text-green-400 text-xs font-bold tracking-wider">AUTHORIZED ACCESS</div>
+              </div>
+              
+              {/* Traffic Light */}
+              <div className="absolute top-3 right-4 flex gap-1">
+                <div className={`w-2 h-2 rounded-full ${animationStep >= 1 ? 'bg-green-400' : 'bg-gray-600'}`}></div>
+                <div className={`w-2 h-2 rounded-full ${animationStep === 0 ? 'bg-red-500' : 'bg-gray-600'}`}></div>
+              </div>
             </div>
             
-            {/* Gate Barrier */}
+            {/* Left Gate Barrier */}
             <div 
-              className={`absolute bottom-0 w-full bg-red-500 transition-all duration-1000 ${
-                animationStep >= 1 ? 'gate-opening' : 'h-2'
+              className={`absolute bottom-0 left-0 w-1/2 h-3 bg-gradient-to-r from-red-600 to-red-500 transition-all duration-1500 ${
+                animationStep >= 1 ? 'transform -translate-x-full' : ''
               }`}
               style={{
-                transformOrigin: 'center bottom'
+                transformOrigin: 'left center',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
               }}
             />
             
-            {/* Cars Animation */}
-            <div className="absolute bottom-2 left-0 w-full">
+            {/* Right Gate Barrier */}
+            <div 
+              className={`absolute bottom-0 right-0 w-1/2 h-3 bg-gradient-to-l from-red-600 to-red-500 transition-all duration-1500 ${
+                animationStep >= 1 ? 'transform translate-x-full' : ''
+              }`}
+              style={{
+                transformOrigin: 'right center',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+              }}
+            />
+            
+            {/* Road Surface */}
+            <div className="absolute bottom-0 w-full h-8 bg-gray-400">
+              <div className="w-full h-1 bg-yellow-300 mt-3"></div>
+            </div>
+            
+            {/* Car Animation */}
+            <div className="absolute bottom-4 left-4">
               <div 
-                className={`w-8 h-4 bg-blue-500 rounded transition-all duration-2000 ${
-                  animationStep >= 2 ? 'transform translate-x-full' : ''
+                className={`w-12 h-6 bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg transition-all duration-2500 flex items-center justify-center ${
+                  animationStep >= 2 ? 'transform translate-x-96' : ''
                 }`}
-              />
+                style={{
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                }}
+              >
+                <div className="text-white text-xs">🚗</div>
+              </div>
+            </div>
+            
+            {/* Entrance Sign */}
+            <div className="absolute top-12 left-1/2 transform -translate-x-1/2">
+              <div className="bg-green-700 text-white px-3 py-1 rounded text-xs font-semibold">
+                ENTRY GATE
+              </div>
             </div>
           </div>
 

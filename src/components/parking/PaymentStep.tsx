@@ -32,13 +32,34 @@ export const PaymentStep = ({
     toast
   } = useToast();
   const handlePayment = async () => {
+    // Validate payment details based on method
+    if (paymentData.method === 'card') {
+      if (!paymentData.cardNumber || !paymentData.expiryDate || !paymentData.cvv || !paymentData.cardHolder) {
+        toast({
+          title: "Payment Details Required",
+          description: "Please fill in all card details to proceed",
+          variant: "destructive"
+        });
+        return;
+      }
+    } else if (paymentData.method === 'online') {
+      if (!paymentData.upiId && !paymentData.netBankingBank) {
+        toast({
+          title: "Payment Details Required", 
+          description: "Please provide UPI ID or select net banking",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     setIsProcessing(true);
 
     // Simulate payment processing
     setTimeout(() => {
       toast({
         title: "Payment Successful",
-        description: `₹${plan.price} has been charged successfully!`
+        description: `₹${plan.price + 10} has been charged successfully!`
       });
       onComplete(paymentData);
       setIsProcessing(false);
@@ -120,20 +141,22 @@ export const PaymentStep = ({
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Choose Payment Method</Label>
-                  <Select>
+                  <Select value={paymentData.netBankingBank} onValueChange={value => updatePaymentData('netBankingBank', value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select payment method" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="upi">UPI Payment</SelectItem>
-                      <SelectItem value="netbanking">Net Banking</SelectItem>
-                      <SelectItem value="wallet">Digital Wallet</SelectItem>
+                      <SelectItem value="sbi">State Bank of India</SelectItem>
+                      <SelectItem value="hdfc">HDFC Bank</SelectItem>
+                      <SelectItem value="icici">ICICI Bank</SelectItem>
+                      <SelectItem value="axis">Axis Bank</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="upiId">UPI ID (Optional)</Label>
+                  <Label htmlFor="upiId">UPI ID</Label>
                   <Input id="upiId" value={paymentData.upiId} onChange={e => updatePaymentData('upiId', e.target.value)} placeholder="yourname@upi" />
                 </div>
 

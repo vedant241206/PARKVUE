@@ -55,33 +55,38 @@ export const PlanSelection = ({
         const Icon = getIcon(plan.icon);
         const availableCount = getAvailableCount(plan.type);
         const isAvailable = availableCount > 0;
-        return <Card key={plan.type} className={`shadow-card transition-all duration-300 hover:shadow-elevated ${isAvailable ? 'hover:scale-105' : 'opacity-60'}`}>
-              <CardHeader className="text-center">
+        return <Card key={plan.type} className={`shadow-card transition-all duration-300 hover:shadow-elevated ${isAvailable ? 'hover:scale-105' : 'opacity-60'} border-2 hover:border-primary/20`}>
+              <CardHeader className="text-center pb-4">
                 <div className={`mx-auto mb-4 ${getPlanColor(plan.type)}`}>
                   <Icon className="h-12 w-12" />
                 </div>
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
-                <p className="text-muted-foreground text-sm">{plan.description}</p>
-                <div className="flex items-center justify-center gap-2 mt-2">
+                <CardTitle className="text-xl mb-2">{plan.name}</CardTitle>
+                <p className="text-muted-foreground text-sm mb-3">{plan.description}</p>
+                <div className="flex items-center justify-center gap-2">
                   <Badge variant={isAvailable ? "default" : "destructive"}>
                     {availableCount} spots available
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center">
-                  <span className="text-3xl font-bold">₹{plan.price}</span>
-                  <span className="text-muted-foreground">/session</span>
+              <CardContent className="space-y-4 pt-0">
+                <div className="text-center py-2 bg-muted/30 rounded-lg">
+                  <span className="text-3xl font-bold text-primary">₹{plan.price}</span>
+                  <span className="text-muted-foreground text-sm block">/session</span>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 min-h-[120px]">
                   {plan.features.map((feature, index) => <div key={index} className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-parking-available" />
+                      <Check className="h-4 w-4 text-parking-available flex-shrink-0" />
                       <span>{feature}</span>
                     </div>)}
                 </div>
 
-                <Button onClick={() => onSelect(plan)} disabled={!isAvailable} variant={plan.type === 'vip' ? 'default' : 'outline'} className="w-full bg-slate-50 text-zinc-950">
+                <Button 
+                  onClick={() => onSelect(plan)} 
+                  disabled={!isAvailable} 
+                  className="w-full h-12 font-semibold transition-all duration-200 hover:scale-105"
+                  variant={isAvailable ? "default" : "secondary"}
+                >
                   {isAvailable ? 'Select Plan' : 'Not Available'}
                 </Button>
               </CardContent>

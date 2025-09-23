@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Users, Car, BarChart3, Clock } from 'lucide-react';
+import { ArrowLeft, Users, Car, BarChart3, Clock, Trash2, Download } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import type { ParkingSpot, Booking } from '@/types/parking';
 
 interface AdminDashboardProps {
@@ -28,6 +29,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   });
   const [spots, setSpots] = useState<ParkingSpot[]>([]);
   const [recentBookings, setRecentBookings] = useState<(Booking & { parking_spots?: ParkingSpot })[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchDashboardData();
@@ -149,6 +151,112 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     }
   };
 
+  const clearAllBookings = async () => {
+    if (!confirm('Are you sure you want to clear all bookings? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      // First, make all parking spots available
+      await supabase
+        .from('parking_spots')
+        .update({ is_occupied: false });
+
+      // Then delete all bookings
+      await supabase
+        .from('bookings')
+        .delete()
+        .neq('id', ''); // Delete all records
+
+      toast({
+        title: "Bookings Cleared",
+        description: "All bookings have been cleared and parking spots are now available"
+      });
+
+      // Refresh data
+      fetchDashboardData();
+    } catch (error) {
+      console.error('Failed to clear bookings:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear bookings",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const downloadExcelData = async () => {
+    try {
+      // Fetch all bookings with parking spot details
+      const { data: allBookings } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          parking_spots (*)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (!allBookings || allBookings.length === 0) {
+        toast({
+          title: "No Data",
+          description: "No booking data available to download"
+        });
+        return;
+      }
+
+      // Convert to CSV format
+      const headers = [
+        'Name',
+        'Arriving Time', 
+        'Contact No',
+        'Email ID',
+        'Vehicle Type',
+        'Vehicle Number',
+        'Parking Type',
+        'Payment Details',
+        'Exit Time'
+      ];
+
+      const csvContent = [
+        headers.join(','),
+        ...allBookings.map(booking => [
+          booking.user_name,
+          new Date(booking.entry_time).toLocaleString('en-IN'),
+          booking.contact_number,
+          booking.email,
+          booking.vehicle_type.replace('wheeler', '-Wheeler'),
+          booking.vehicle_number,
+          booking.plan_type,
+          `${booking.payment_method} - ₹${booking.payment_amount}`,
+          booking.exit_time ? new Date(booking.exit_time).toLocaleString('en-IN') : 'NOT_EXITED'
+        ].join(','))
+      ].join('\n');
+
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `parking-data-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({
+        title: "Download Complete",
+        description: "Parking data has been downloaded successfully"
+      });
+    } catch (error) {
+      console.error('Failed to download data:', error);
+      toast({
+        title: "Download Failed",
+        description: "Failed to download parking data",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto">
       {/* Header */}
@@ -162,10 +270,20 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               </CardTitle>
               <p className="text-muted-foreground">Real-time parking management overview</p>
             </div>
-            <Button variant="outline" onClick={onBack}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={downloadExcelData}>
+                <Download className="mr-2 h-4 w-4" />
+                Download Data
+              </Button>
+              <Button variant="outline" onClick={clearAllBookings}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                Clear Bookings
+              </Button>
+              <Button variant="outline" onClick={onBack}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+            </div>
           </div>
         </CardHeader>
       </Card>

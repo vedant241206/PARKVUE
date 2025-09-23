@@ -10,11 +10,14 @@ import { ParkingReceipt } from './parking/ParkingReceipt';
 import { GateAnimation } from './parking/GateAnimation';
 import { ExitFlow } from './parking/ExitFlow';
 import { AdminDashboard } from './parking/AdminDashboard';
+import { AdminLogin } from './parking/AdminLogin';
+import { LanguageSelector } from './parking/LanguageSelector';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/useLanguage';
 import type { BookingFormData, PlanOption, PaymentFormData, ParkingSpot } from '@/types/parking';
 export const ParkingSystem = () => {
-  const [step, setStep] = useState<'entry' | 'form' | 'auth' | 'plans' | 'payment' | 'receipt' | 'gate' | 'exit' | 'admin'>('entry');
+  const [step, setStep] = useState<'entry' | 'form' | 'auth' | 'plans' | 'payment' | 'receipt' | 'gate' | 'exit' | 'admin' | 'admin-login'>('entry');
   const [formData, setFormData] = useState<BookingFormData>({
     user_name: '',
     contact_number: '',
@@ -27,9 +30,8 @@ export const ParkingSystem = () => {
   const [assignedSpot, setAssignedSpot] = useState<ParkingSpot | null>(null);
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [availableSpots, setAvailableSpots] = useState<ParkingSpot[]>([]);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const { currentLanguage, changeLanguage, t } = useLanguage();
   const planOptions: PlanOption[] = [{
     type: 'normal',
     name: 'Normal Parking',
@@ -169,15 +171,25 @@ export const ParkingSystem = () => {
   if (step === 'exit') {
     return <ExitFlow onComplete={resetSystem} onBack={() => setStep('entry')} />;
   }
+  if (step === 'admin-login') {
+    return <AdminLogin onSuccess={() => setStep('admin')} onBack={() => setStep('entry')} />;
+  }
+  
   if (step === 'admin') {
     return <AdminDashboard onBack={() => setStep('entry')} />;
   }
   return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-primary text-primary-foreground py-6 px-4">
-        <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-2">PARKVUE</h1>
-          <p className="text-lg opacity-90">Find, Book & Park with Ease</p>
+        <div className="container mx-auto">
+          <div className="flex justify-between items-center mb-4">
+            <div></div>
+            <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={changeLanguage} />
+          </div>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-2">PARKVUE</h1>
+            <p className="text-lg opacity-90">{t('tagline')}</p>
+          </div>
         </div>
       </header>
 
@@ -187,9 +199,8 @@ export const ParkingSystem = () => {
               <CardContent className="p-8 text-center">
                 <div className="mb-8">
                   <Car className="mx-auto mb-4 h-20 w-20 text-primary" />
-                  <h2 className="text-3xl font-bold mb-4">Welcome to PARKVUE</h2>
-                  <p className="text-lg text-muted-foreground mb-8">Skip the hassle of finding parking. Get your spot assigned instantly!
-Because time should not be wasted parking!</p>
+                  <h2 className="text-3xl font-bold mb-4">{t('welcome')}</h2>
+                  <p className="text-lg text-muted-foreground mb-8">{t('skip_hassle')}<br/>{t('time_not_wasted')}</p>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6 mb-8">
@@ -197,31 +208,31 @@ Because time should not be wasted parking!</p>
                     <div className="bg-parking-available/10 rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
                       <span className="text-2xl font-bold text-parking-available">{availableSpots.filter(s => s.spot_type === 'normal').length}</span>
                     </div>
-                    <p className="font-semibold">Normal Spots</p>
+                    <p className="font-semibold">{t('normal_spots')}</p>
                   </div>
                   <div className="text-center">
                     <div className="bg-parking-vip/10 rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
                       <span className="text-2xl font-bold text-parking-vip">{availableSpots.filter(s => s.spot_type === 'vip').length}</span>
                     </div>
-                    <p className="font-semibold">VIP Spots</p>
+                    <p className="font-semibold">{t('vip_spots')}</p>
                   </div>
                   <div className="text-center">
                     <div className="bg-parking-ev/10 rounded-full p-4 w-16 h-16 mx-auto mb-3 flex items-center justify-center">
                       <span className="text-2xl font-bold text-parking-ev">{availableSpots.filter(s => s.spot_type === 'ev_charging').length}</span>
                     </div>
-                    <p className="font-semibold">EV Charging</p>
+                    <p className="font-semibold">{t('ev_charging')}</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4 justify-center">
                   <Button size="lg" onClick={() => setStep('form')} className="px-8">
-                    Book Parking Spot
+                    {t('book_parking')}
                   </Button>
                   <Button variant="outline" size="lg" onClick={() => setStep('exit')} className="px-8">
-                    Exit Parking
+                    {t('exit_parking')}
                   </Button>
-                  <Button variant="secondary" size="lg" onClick={() => setStep('admin')} className="px-8">
-                    Admin Dashboard
+                  <Button variant="secondary" size="lg" onClick={() => setStep('admin-login')} className="px-8">
+                    {t('admin_dashboard')}
                   </Button>
                 </div>
               </CardContent>
