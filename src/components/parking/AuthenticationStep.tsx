@@ -37,7 +37,7 @@ export const AuthenticationStep = ({
       } else {
         toast({
           title: "Verification Failed",
-          description: "Please enter the correct OTP for both phone and email",
+          description: "Please enter the correct OTP (123456) for both phone and email",
           variant: "destructive"
         });
       }
@@ -47,7 +47,7 @@ export const AuthenticationStep = ({
   const sendOtp = (type: 'phone' | 'email') => {
     toast({
       title: "OTP Sent",
-      description: `Verification code sent to your ${type}.`
+      description: `Verification code sent to your ${type}. Use 123456 for demo.`
     });
   };
   return <div className="max-w-2xl mx-auto">
@@ -78,27 +78,14 @@ export const AuthenticationStep = ({
                 <p className="text-sm text-muted-foreground mb-2">
                   Code sent to: <span className="font-medium">{contactNumber}</span>
                 </p>
-                <Input value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder="Enter 6-digit OTP" maxLength={6} />
+                <Input value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder="Enter 6-digit OTP (123456)" maxLength={6} />
               </div>
             </div>
 
             {/* Email Verification */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  Email Verification
-                </Label>
-                <Button variant="outline" size="sm" onClick={() => sendOtp('email')}>
-                  Send OTP
-                </Button>
-              </div>
-              <div className="bg-muted/50 p-3 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Code sent to: <span className="font-medium">{email}</span>
-                </p>
-                <Input value={emailOtp} onChange={e => setEmailOtp(e.target.value)} placeholder="Enter 6-digit OTP" maxLength={6} />
-              </div>
+              
+              
             </div>
 
             {/* Demo Notice */}
