@@ -78,8 +78,11 @@ PARKVUE - Smart Parking Solution
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Card className="shadow-elevated receipt-print">
-        <CardHeader className="text-center bg-parking-available/10">
+      <Card className="shadow-2xl border-2 border-gray-200 bg-white receipt-print" style={{
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)'
+      }}>
+        <CardHeader className="text-center bg-gradient-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-100">
           <div className="mx-auto mb-4 w-16 h-16 bg-parking-available rounded-full flex items-center justify-center">
             <CheckCircle className="h-8 w-8 text-white" />
           </div>
@@ -89,9 +92,9 @@ PARKVUE - Smart Parking Solution
           <p className="text-muted-foreground">Your parking spot has been reserved</p>
         </CardHeader>
 
-        <CardContent className="p-6">
+        <CardContent className="p-8 bg-white">
           {/* Parking Location - Prominent Display */}
-          <div className="text-center mb-8 p-6 bg-primary/5 rounded-lg border-2 border-primary/20">
+          <div className="text-center mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-lg">
             <div className="flex items-center justify-center gap-2 mb-2">
               <MapPin className="h-6 w-6 text-primary" />
               <span className="text-lg font-semibold">Your Parking Location</span>
@@ -195,7 +198,7 @@ PARKVUE - Smart Parking Solution
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-gradient-to-r from-blue-50 to-sky-50 border-2 border-blue-200 rounded-xl p-6 shadow-inner">
               <h4 className="font-semibold text-blue-800 mb-2">Important Instructions:</h4>
               <ul className="text-sm text-blue-700 space-y-1">
                 <li>• Keep this receipt with you at all times</li>

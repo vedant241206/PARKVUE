@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Shield, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, Shield, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 interface AuthenticationStepProps {
   contactNumber: string;
@@ -18,7 +18,6 @@ export const AuthenticationStep = ({
   onBack
 }: AuthenticationStepProps) => {
   const [phoneOtp, setPhoneOtp] = useState('');
-  const [emailOtp, setEmailOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const {
     toast
@@ -28,7 +27,7 @@ export const AuthenticationStep = ({
 
     // Simulate verification delay
     setTimeout(() => {
-      if (phoneOtp === '123456' && emailOtp === '123456') {
+      if (phoneOtp === '123456') {
         toast({
           title: "Verification Successful",
           description: "Your identity has been verified successfully!"
@@ -37,7 +36,7 @@ export const AuthenticationStep = ({
       } else {
         toast({
           title: "Verification Failed",
-          description: "Please enter the correct OTP (123456) for both phone and email",
+          description: "Please enter the correct OTP (123456)",
           variant: "destructive"
         });
       }
@@ -84,11 +83,13 @@ export const AuthenticationStep = ({
 
             {/* Email Verification */}
             <div className="space-y-4">
-              
-              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-semibold text-blue-800 mb-2">Demo Mode</h4>
+                <p className="text-sm text-blue-700">
+                  Enter <strong>123456</strong> as the OTP to proceed
+                </p>
+              </div>
             </div>
-
-            {/* Demo Notice */}
             
 
             <div className="flex gap-4 pt-4">
@@ -96,7 +97,7 @@ export const AuthenticationStep = ({
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
               </Button>
-              <Button onClick={handleVerify} className="flex-1" disabled={isVerifying || !phoneOtp || !emailOtp}>
+              <Button onClick={handleVerify} className="flex-1" disabled={isVerifying || !phoneOtp}>
                 {isVerifying ? 'Verifying...' : 'Authenticate'}
               </Button>
             </div>

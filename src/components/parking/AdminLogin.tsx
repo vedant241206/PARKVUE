@@ -22,7 +22,7 @@ export const AdminLogin = ({ onSuccess, onBack }: AdminLoginProps) => {
     setIsLoading(true);
     
     // Check admin credentials
-    if (email === 'admin@DASH' && password === 'ADMIN_SECURE_2024!') {
+    if (email.endsWith('.somaiya.edu') && password === 'admin@DASH') {
       toast({
         title: "Admin Access Granted",
         description: "Welcome to the admin dashboard"
