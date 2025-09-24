@@ -11,7 +11,7 @@ interface AdminDashboardProps {
   onBack: () => void;
 }
 
-import { useLanguage } from '@/hooks/useLanguage';
+
 
 interface DashboardStats {
   totalSpots: number;
@@ -32,7 +32,6 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [spots, setSpots] = useState<ParkingSpot[]>([]);
   const [recentBookings, setRecentBookings] = useState<(Booking & { parking_spots?: ParkingSpot })[]>([]);
   const { toast } = useToast();
-  const { t } = useLanguage();
 
   useEffect(() => {
     fetchDashboardData();
@@ -145,7 +144,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   };
 
   const clearAllBookings = async () => {
-    if (!confirm(t('confirm_clear_all'))) {
+    if (!confirm('Are you sure you want to clear all bookings? This action cannot be undone.')) {
       return;
     }
 
@@ -188,8 +187,8 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       setSpots(updatedSpots);
 
       toast({
-        title: t('system_reset_complete'),
-        description: t('all_bookings_cleared')
+        title: 'System Reset Complete',
+        description: 'All bookings have been cleared and parking spots are now available'
       });
 
       // Refresh data after a short delay to ensure database is updated
@@ -199,8 +198,8 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     } catch (error) {
       console.error('Failed to clear bookings:', error);
       toast({
-        title: t('reset_failed'),
-        description: t('reset_error'),
+        title: 'Reset Failed',
+        description: 'Failed to clear all bookings. Please try again.',
         variant: "destructive"
       });
     }
@@ -287,9 +286,9 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
             <div>
               <CardTitle className="text-2xl flex items-center gap-2">
                 <BarChart3 className="h-6 w-6" />
-                {t('admin_dashboard')}
+                Admin Dashboard
               </CardTitle>
-              <p className="text-muted-foreground">{t('admin_overview')}</p>
+              <p className="text-muted-foreground">Monitor parking system status and manage bookings</p>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={downloadExcelData}>
