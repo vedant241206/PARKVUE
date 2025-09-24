@@ -15,18 +15,18 @@ export const LanguageSelector = ({ currentLanguage, onLanguageChange }: Language
     { code: 'mr', name: 'मराठी', flag: '🇮🇳' }
   ];
 
+  const currentLang = languages.find(lang => lang.code === currentLanguage);
+
   return (
     <div className="flex items-center gap-2">
       <Globe className="h-4 w-4 text-muted-foreground" />
       <Select value={currentLanguage} onValueChange={onLanguageChange}>
         <SelectTrigger className="w-32">
-          <SelectValue>
-            {languages.find(lang => lang.code === currentLanguage) && (
-              <div className="flex items-center gap-2">
-                <span>{languages.find(lang => lang.code === currentLanguage)?.flag}</span>
-                <span>{languages.find(lang => lang.code === currentLanguage)?.name}</span>
-              </div>
-            )}
+          <SelectValue asChild>
+            <div className="flex items-center gap-2">
+              <span>{currentLang?.flag}</span>
+              <span>{currentLang?.name}</span>
+            </div>
           </SelectValue>
         </SelectTrigger>
         <SelectContent className="z-[100] bg-background border border-border shadow-elevated">

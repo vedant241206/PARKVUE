@@ -10,10 +10,10 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
   const [animationStep, setAnimationStep] = useState(0);
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setAnimationStep(1), 500);
-    const timer2 = setTimeout(() => setAnimationStep(2), 1500);
-    const timer3 = setTimeout(() => setAnimationStep(3), 2500);
-    const timer4 = setTimeout(() => onComplete(), 3500);
+    const timer1 = setTimeout(() => setAnimationStep(1), 1000);
+    const timer2 = setTimeout(() => setAnimationStep(2), 3000);
+    const timer3 = setTimeout(() => setAnimationStep(3), 5000);
+    const timer4 = setTimeout(() => onComplete(), 7000);
 
     return () => {
       clearTimeout(timer1);
@@ -50,7 +50,7 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
             
             {/* Sliding Gate Panels */}
             <div 
-              className={`absolute bottom-8 left-6 w-20 h-16 bg-gradient-to-r from-orange-600 to-red-500 transition-all duration-2000 ease-out rounded-r-lg ${
+              className={`absolute bottom-8 left-6 w-20 h-16 bg-gradient-to-r from-orange-600 to-red-500 transition-all duration-4000 ease-out rounded-r-lg ${
                 animationStep >= 1 ? 'transform -translate-x-20 opacity-80' : ''
               }`}
               style={{
@@ -62,7 +62,7 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
             </div>
             
             <div 
-              className={`absolute bottom-8 right-6 w-20 h-16 bg-gradient-to-l from-orange-600 to-red-500 transition-all duration-2000 ease-out rounded-l-lg ${
+              className={`absolute bottom-8 right-6 w-20 h-16 bg-gradient-to-l from-orange-600 to-red-500 transition-all duration-4000 ease-out rounded-l-lg ${
                 animationStep >= 1 ? 'transform translate-x-20 opacity-80' : ''
               }`}
               style={{
@@ -95,18 +95,18 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
             {/* Vehicle Animation */}
             <div className="absolute bottom-4 left-2">
               <div 
-                className={`w-16 h-8 bg-gradient-to-r from-indigo-600 to-purple-500 rounded-lg transition-all duration-3000 ease-in-out flex items-center justify-center shadow-lg ${
+                className={`w-16 h-8 bg-gradient-to-r from-indigo-600 to-purple-500 rounded-lg transition-all duration-5000 ease-in-out flex items-center justify-center shadow-lg ${
                   animationStep >= 2 ? 'transform translate-x-80 scale-105' : ''
                 }`}
                 style={{
                   boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
                 }}
               >
-                <div className="text-white text-sm">🚙</div>
-                <div className={`absolute -bottom-1 left-2 w-2 h-2 bg-gray-800 rounded-full transition-all duration-3000 ${
+                <div className="text-white text-lg">🚗</div>
+                <div className={`absolute -bottom-1 left-2 w-2 h-2 bg-gray-800 rounded-full transition-all duration-5000 ${
                   animationStep >= 2 ? 'animate-spin' : ''
                 }`}></div>
-                <div className={`absolute -bottom-1 right-2 w-2 h-2 bg-gray-800 rounded-full transition-all duration-3000 ${
+                <div className={`absolute -bottom-1 right-2 w-2 h-2 bg-gray-800 rounded-full transition-all duration-5000 ${
                   animationStep >= 2 ? 'animate-spin' : ''
                 }`}></div>
               </div>

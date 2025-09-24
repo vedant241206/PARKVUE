@@ -32,6 +32,8 @@ export const PaymentStep = ({
     toast
   } = useToast();
   const handlePayment = async () => {
+    if (isProcessing) return; // Prevent double clicks
+    
     // Validate payment details based on method
     if (paymentData.method === 'card') {
       if (!paymentData.cardNumber || !paymentData.expiryDate || !paymentData.cvv || !paymentData.cardHolder) {
