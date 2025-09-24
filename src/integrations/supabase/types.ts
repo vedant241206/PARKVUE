@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_sessions: {
+        Row: {
+          created_at: string | null
+          email: string
+          expires_at: string | null
+          id: string
+          session_token: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          expires_at?: string | null
+          id?: string
+          session_token: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          expires_at?: string | null
+          id?: string
+          session_token?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           contact_number: string
@@ -114,7 +138,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_admin_session: {
+        Args: { admin_email: string; admin_password: string }
+        Returns: Json
+      }
+      verify_admin_session: {
+        Args: { session_token: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
