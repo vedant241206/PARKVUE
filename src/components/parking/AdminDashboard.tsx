@@ -73,17 +73,6 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
   const fetchDashboardData = async () => {
     try {
-      // Get admin session token
-      const sessionToken = localStorage.getItem('admin_session_token');
-      
-      // Set session token for RLS policies
-      if (sessionToken) {
-        await supabase.rpc('set_config', {
-          setting_name: 'app.admin_session_token',
-          setting_value: sessionToken
-        });
-      }
-
       // Fetch parking spots
       const { data: spotsData } = await supabase
         .from('parking_spots')
@@ -163,25 +152,33 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   };
 
   const clearAllBookings = async () => {
-    if (!confirm('Are you sure you want to clear all bookings? This action cannot be undone.')) {
+    if (!confirm('Are you sure you want to clear all bookings and reset the parking system? This action cannot be undone.')) {
       return;
     }
 
     try {
       // First, make all parking spots available
-      await supabase
+      const { error: spotsError } = await supabase
         .from('parking_spots')
         .update({ is_occupied: false });
 
+      if (spotsError) {
+        throw spotsError;
+      }
+
       // Then delete all bookings
-      await supabase
+      const { error: bookingsError } = await supabase
         .from('bookings')
         .delete()
-        .neq('id', ''); // Delete all records
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+
+      if (bookingsError) {
+        throw bookingsError;
+      }
 
       toast({
-        title: "Bookings Cleared",
-        description: "All bookings have been cleared and parking spots are now available"
+        title: "System Reset Complete",
+        description: "All bookings cleared and parking spots are now available"
       });
 
       // Refresh data
@@ -189,8 +186,8 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     } catch (error) {
       console.error('Failed to clear bookings:', error);
       toast({
-        title: "Error",
-        description: "Failed to clear bookings",
+        title: "Reset Failed",
+        description: "Failed to reset the parking system",
         variant: "destructive"
       });
     }
@@ -198,15 +195,6 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
   const downloadExcelData = async () => {
     try {
-      // Set admin session token
-      const sessionToken = localStorage.getItem('admin_session_token');
-      if (sessionToken) {
-        await supabase.rpc('set_config', {
-          setting_name: 'app.admin_session_token',
-          setting_value: sessionToken
-        });
-      }
-
       // Fetch all bookings with parking spot details
       const { data: allBookings } = await supabase
         .from('bookings')

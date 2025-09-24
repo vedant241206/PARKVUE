@@ -142,6 +142,10 @@ export type Database = {
         Args: { admin_email: string; admin_password: string }
         Returns: Json
       }
+      set_admin_context: {
+        Args: { session_token: string }
+        Returns: boolean
+      }
       verify_admin_session: {
         Args: { session_token: string }
         Returns: boolean

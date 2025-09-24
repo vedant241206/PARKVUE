@@ -50,22 +50,22 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
             
             {/* Left Gate Barrier */}
             <div 
-              className={`absolute bottom-0 left-0 w-1/2 h-3 bg-gradient-to-r from-red-600 to-red-500 transition-all duration-1500 ${
-                animationStep >= 1 ? 'transform -translate-x-full' : ''
+              className={`absolute bottom-0 left-0 w-1/2 h-3 bg-gradient-to-r from-red-600 to-red-500 transition-all duration-2000 ease-out ${
+                animationStep >= 1 ? 'transform -rotate-90 -translate-x-6 -translate-y-6' : ''
               }`}
               style={{
-                transformOrigin: 'left center',
+                transformOrigin: 'left bottom',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
               }}
             />
             
             {/* Right Gate Barrier */}
             <div 
-              className={`absolute bottom-0 right-0 w-1/2 h-3 bg-gradient-to-l from-red-600 to-red-500 transition-all duration-1500 ${
-                animationStep >= 1 ? 'transform translate-x-full' : ''
+              className={`absolute bottom-0 right-0 w-1/2 h-3 bg-gradient-to-l from-red-600 to-red-500 transition-all duration-2000 ease-out ${
+                animationStep >= 1 ? 'transform rotate-90 translate-x-6 -translate-y-6' : ''
               }`}
               style={{
-                transformOrigin: 'right center',
+                transformOrigin: 'right bottom',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
               }}
             />

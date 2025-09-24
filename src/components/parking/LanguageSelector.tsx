@@ -21,13 +21,15 @@ export const LanguageSelector = ({ currentLanguage, onLanguageChange }: Language
       <Select value={currentLanguage} onValueChange={onLanguageChange}>
         <SelectTrigger className="w-32">
           <SelectValue>
-            <div className="flex items-center gap-2">
-              <span>{languages.find(lang => lang.code === currentLanguage)?.flag}</span>
-              <span>{languages.find(lang => lang.code === currentLanguage)?.name}</span>
-            </div>
+            {languages.find(lang => lang.code === currentLanguage) && (
+              <div className="flex items-center gap-2">
+                <span>{languages.find(lang => lang.code === currentLanguage)?.flag}</span>
+                <span>{languages.find(lang => lang.code === currentLanguage)?.name}</span>
+              </div>
+            )}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="z-50">
           {languages.map((lang) => (
             <SelectItem key={lang.code} value={lang.code}>
               <div className="flex items-center gap-2">

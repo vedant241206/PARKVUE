@@ -15,61 +15,151 @@ export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptP
   const entryTime = new Date(booking.entry_time);
 
   const handleDownload = () => {
-    // Create a printable version of the receipt
-    const receiptContent = `
-PARKVUE - Parking Receipt
-========================
+    // Create HTML content for the receipt
+    const receiptHTML = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PARKVUE - Parking Receipt</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .location { text-align: center; background: #eff6ff; border: 2px solid #3b82f6; padding: 30px; border-radius: 12px; margin: 20px 0; }
+        .location-number { font-size: 48px; font-weight: bold; color: #1d4ed8; margin: 10px 0; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px; }
+        .section h3 { margin: 0 0 10px 0; color: #374151; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .field { margin: 8px 0; }
+        .label { color: #6b7280; font-size: 14px; }
+        .value { font-weight: 600; color: #111827; }
+        .total { font-size: 18px; font-weight: bold; padding-top: 10px; border-top: 2px solid #374151; }
+        .instructions { background: #eff6ff; border: 2px solid #3b82f6; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .instructions h4 { color: #1e40af; margin: 0 0 10px 0; }
+        .instructions ul { margin: 0; padding-left: 20px; color: #1e40af; }
+        .footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PARKVUE</h1>
+        <h2>Booking Confirmed!</h2>
+        <p>Your parking spot has been reserved</p>
+    </div>
 
-Booking Confirmed!
-Your parking spot has been reserved
+    <div class="location">
+        <h3>Your Parking Location</h3>
+        <div class="location-number">${spot.spot_number}</div>
+        <p>Floor ${spot.floor_level} • Section ${spot.section}</p>
+    </div>
 
-PARKING LOCATION: ${spot.spot_number}
-Floor ${spot.floor_level} • Section ${spot.section}
+    <div class="section">
+        <h3>Booking Details</h3>
+        <div class="grid">
+            <div class="field">
+                <div class="label">Booking ID</div>
+                <div class="value">${booking.id.slice(0, 8).toUpperCase()}</div>
+            </div>
+            <div class="field">
+                <div class="label">Vehicle Number</div>
+                <div class="value">${booking.vehicle_number}</div>
+            </div>
+            <div class="field">
+                <div class="label">Vehicle Type</div>
+                <div class="value">${booking.vehicle_type.replace('wheeler', '-Wheeler')}</div>
+            </div>
+            <div class="field">
+                <div class="label">Plan Type</div>
+                <div class="value">${plan.name}</div>
+            </div>
+        </div>
+    </div>
 
-BOOKING DETAILS:
-- Booking ID: ${booking.id.slice(0, 8).toUpperCase()}
-- Vehicle Number: ${booking.vehicle_number}
-- Vehicle Type: ${booking.vehicle_type.replace('wheeler', '-Wheeler')}
-- Plan Type: ${plan.name}
+    <div class="section">
+        <h3>Timing Information</h3>
+        <div class="grid">
+            <div class="field">
+                <div class="label">Entry Time</div>
+                <div class="value">${entryTime.toLocaleString('en-IN', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}</div>
+            </div>
+            <div class="field">
+                <div class="label">Status</div>
+                <div class="value" style="color: #10b981;">Active</div>
+            </div>
+        </div>
+    </div>
 
-TIMING INFORMATION:
-- Entry Time: ${entryTime.toLocaleString('en-IN', {
-      day: '2-digit',
-      month: 'short', 
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })}
-- Status: Active
+    <div class="section">
+        <h3>Payment Summary</h3>
+        <div class="field">
+            <div style="display: flex; justify-content: space-between;">
+                <span>Plan Cost</span>
+                <span>₹${plan.price}</span>
+            </div>
+        </div>
+        <div class="field">
+            <div style="display: flex; justify-content: space-between;">
+                <span>Service Charge</span>
+                <span>₹10</span>
+            </div>
+        </div>
+        <div class="field total">
+            <div style="display: flex; justify-content: space-between;">
+                <span>Total Paid</span>
+                <span>₹${booking.payment_amount + 10}</span>
+            </div>
+        </div>
+        <div style="font-size: 12px; color: #6b7280; margin-top: 8px;">
+            Payment Method: ${booking.payment_method === 'card' ? 'Card Payment' : 'Online Payment'}
+        </div>
+    </div>
 
-PAYMENT SUMMARY:
-- Plan Cost: ₹${plan.price}
-- Service Charge: ₹10
-- Total Paid: ₹${booking.payment_amount + 10}
-- Payment Method: ${booking.payment_method === 'card' ? 'Card Payment' : 'Online Payment'}
+    <div class="section">
+        <h3>Customer Information</h3>
+        <div class="field">
+            <div class="label">Name</div>
+            <div class="value">${booking.user_name}</div>
+        </div>
+        <div class="field">
+            <div class="label">Contact</div>
+            <div class="value">${booking.contact_number}</div>
+        </div>
+        <div class="field">
+            <div class="label">Email</div>
+            <div class="value">${booking.email}</div>
+        </div>
+    </div>
 
-CUSTOMER INFORMATION:
-- Name: ${booking.user_name}
-- Contact: ${booking.contact_number}
-- Email: ${booking.email}
+    <div class="instructions">
+        <h4>Important Instructions:</h4>
+        <ul>
+            <li>Keep this receipt with you at all times</li>
+            <li>Note your parking location: <strong>${spot.spot_number}</strong></li>
+            <li>For exit, use the same contact details for verification</li>
+            <li>Contact support if you need assistance</li>
+        </ul>
+    </div>
 
-IMPORTANT INSTRUCTIONS:
-• Keep this receipt with you at all times
-• Note your parking location: ${spot.spot_number}
-• For exit, use the same contact details for verification
-• Contact support if you need assistance
-
-Generated on: ${new Date().toLocaleString('en-IN')}
-========================
-PARKVUE - Smart Parking Solution
+    <div class="footer">
+        <p>Generated on: ${new Date().toLocaleString('en-IN')}</p>
+        <p><strong>PARKVUE - Smart Parking Solution</strong></p>
+    </div>
+</body>
+</html>
     `;
 
-    // Create and download the file
-    const blob = new Blob([receiptContent], { type: 'text/plain' });
+    // Create and download the HTML file
+    const blob = new Blob([receiptHTML], { type: 'text/html' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `parking-receipt-${booking.id.slice(0, 8)}.txt`;
+    a.download = `parking-receipt-${booking.id.slice(0, 8)}.html`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);

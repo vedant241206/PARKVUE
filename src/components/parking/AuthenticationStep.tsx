@@ -81,14 +81,11 @@ export const AuthenticationStep = ({
               </div>
             </div>
 
-            {/* Email Verification */}
-            <div className="space-y-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-800 mb-2">Demo Mode</h4>
-                <p className="text-sm text-blue-700">
-                  Enter <strong>123456</strong> as the OTP to proceed
-                </p>
-              </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-semibold text-blue-800 mb-2">Demo Mode</h4>
+              <p className="text-sm text-blue-700">
+                Enter <strong>123456</strong> as the OTP to proceed
+              </p>
             </div>
             
 

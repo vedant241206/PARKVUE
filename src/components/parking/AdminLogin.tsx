@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Shield, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminLoginProps {
   onSuccess: () => void;
@@ -21,13 +22,36 @@ export const AdminLogin = ({ onSuccess, onBack }: AdminLoginProps) => {
   const handleLogin = async () => {
     setIsLoading(true);
     
-    // Check admin credentials
-    if (email.endsWith('.somaiya.edu') && password === 'admin@DASH') {
-      toast({
-        title: "Admin Access Granted",
-        description: "Welcome to the admin dashboard"
-      });
-      onSuccess();
+    // Check admin credentials and create session
+    if (email.endsWith('@somaiya.edu') && password === 'admin@DASH') {
+      try {
+        // Create admin session in database
+        const { data, error } = await supabase.rpc('create_admin_session', {
+          admin_email: email,
+          admin_password: password
+        });
+
+        const result = data as { success: boolean; session_token?: string; error?: string };
+
+        if (error || !result.success) {
+          throw new Error('Failed to create admin session');
+        }
+
+        // Store session token
+        localStorage.setItem('admin_session_token', result.session_token!);
+        
+        toast({
+          title: "Admin Access Granted",
+          description: "Welcome to the admin dashboard"
+        });
+        onSuccess();
+      } catch (error) {
+        toast({
+          title: "Access Denied",
+          description: "Failed to authenticate admin",
+          variant: "destructive"
+        });
+      }
     } else {
       toast({
         title: "Access Denied",

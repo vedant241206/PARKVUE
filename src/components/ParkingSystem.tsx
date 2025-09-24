@@ -169,14 +169,68 @@ export const ParkingSystem = () => {
     return <GateAnimation onComplete={() => setStep('entry')} />;
   }
   if (step === 'exit') {
-    return <ExitFlow onComplete={resetSystem} onBack={() => setStep('entry')} />;
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="bg-primary text-primary-foreground py-6 px-4">
+          <div className="container mx-auto">
+            <div className="flex justify-between items-center mb-4">
+              <div></div>
+              <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={changeLanguage} />
+            </div>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2">PARKVUE</h1>
+              <p className="text-lg opacity-90">{t('tagline')}</p>
+            </div>
+          </div>
+        </header>
+        <div className="container mx-auto px-4 py-8">
+          <ExitFlow onComplete={resetSystem} onBack={() => setStep('entry')} />
+        </div>
+      </div>
+    );
   }
   if (step === 'admin-login') {
-    return <AdminLogin onSuccess={() => setStep('admin')} onBack={() => setStep('entry')} />;
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="bg-primary text-primary-foreground py-6 px-4">
+          <div className="container mx-auto">
+            <div className="flex justify-between items-center mb-4">
+              <div></div>
+              <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={changeLanguage} />
+            </div>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2">PARKVUE</h1>
+              <p className="text-lg opacity-90">{t('tagline')}</p>
+            </div>
+          </div>
+        </header>
+        <div className="container mx-auto px-4 py-8">
+          <AdminLogin onSuccess={() => setStep('admin')} onBack={() => setStep('entry')} />
+        </div>
+      </div>
+    );
   }
   
   if (step === 'admin') {
-    return <AdminDashboard onBack={() => setStep('entry')} />;
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="bg-primary text-primary-foreground py-6 px-4">
+          <div className="container mx-auto">
+            <div className="flex justify-between items-center mb-4">
+              <div></div>
+              <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={changeLanguage} />
+            </div>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2">PARKVUE</h1>
+              <p className="text-lg opacity-90">{t('tagline')}</p>
+            </div>
+          </div>
+        </header>
+        <div className="container mx-auto px-4 py-8">
+          <AdminDashboard onBack={() => setStep('entry')} />
+        </div>
+      </div>
+    );
   }
   return <div className="min-h-screen bg-background">
       {/* Header */}
