@@ -238,28 +238,26 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       // Convert to CSV format
       const headers = [
         'Name',
-        'Arriving Time', 
         'Contact No',
         'Email ID',
         'Vehicle Type',
         'Vehicle Number',
         'Parking Type',
-        'Payment Details',
-        'Exit Time'
+        'Payment Method',
+        'Status'
       ];
 
       const csvContent = [
         headers.map(escapeCSV).join(','),
         ...allBookings.map(booking => [
           escapeCSV(booking.user_name),
-          escapeCSV(new Date(booking.entry_time).toLocaleDateString('en-IN') + ' ' + new Date(booking.entry_time).toLocaleTimeString('en-IN')),
           escapeCSV(booking.contact_number),
           escapeCSV(booking.email),
           escapeCSV(booking.vehicle_type.replace('wheeler', '-Wheeler')),
           escapeCSV(booking.vehicle_number),
           escapeCSV(booking.plan_type),
-          escapeCSV(`${booking.payment_method} - ₹${booking.payment_amount}`),
-          escapeCSV(booking.exit_time ? new Date(booking.exit_time).toLocaleDateString('en-IN') + ' ' + new Date(booking.exit_time).toLocaleTimeString('en-IN') : 'NOT_EXITED')
+          escapeCSV(booking.payment_method),
+          escapeCSV(booking.exit_time ? 'completed' : 'active')
         ].join(','))
       ].join('\n');
 
