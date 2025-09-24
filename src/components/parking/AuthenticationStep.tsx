@@ -7,13 +7,11 @@ import { ArrowLeft, Shield, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 interface AuthenticationStepProps {
   contactNumber: string;
-  email: string;
   onSuccess: () => void;
   onBack: () => void;
 }
 export const AuthenticationStep = ({
   contactNumber,
-  email,
   onSuccess,
   onBack
 }: AuthenticationStepProps) => {
@@ -43,10 +41,10 @@ export const AuthenticationStep = ({
       setIsVerifying(false);
     }, 1500);
   };
-  const sendOtp = (type: 'phone' | 'email') => {
+  const sendOtp = () => {
     toast({
       title: "OTP Sent",
-      description: `Verification code sent to your ${type}. Use 123456 for demo.`
+      description: "Verification code sent to your phone. Use 123456 for demo."
     });
   };
   return <div className="max-w-2xl mx-auto">
@@ -57,7 +55,7 @@ export const AuthenticationStep = ({
             Verify Your Identity
           </CardTitle>
           <p className="text-muted-foreground">
-            We've sent verification codes to secure your booking
+            Verify your phone number to secure your booking
           </p>
         </CardHeader>
         <CardContent className="p-6">
@@ -69,7 +67,7 @@ export const AuthenticationStep = ({
                   <Phone className="h-4 w-4" />
                   Phone Verification
                 </Label>
-                <Button variant="outline" size="sm" onClick={() => sendOtp('phone')}>
+                <Button variant="outline" size="sm" onClick={sendOtp}>
                   Send OTP
                 </Button>
               </div>

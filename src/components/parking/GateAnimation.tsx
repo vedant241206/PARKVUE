@@ -33,66 +33,93 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
             <p className="text-gray-300">Welcome to Smart Parking</p>
           </div>
 
-          {/* Realistic Gate Animation */}
-          <div className="relative h-40 mb-6 bg-gradient-to-b from-gray-600 to-gray-800 rounded-lg overflow-hidden border-4 border-gray-500">
-            {/* Gate Frame */}
-            <div className="absolute inset-0">
-              <div className="absolute top-2 left-2 right-2 h-6 bg-gray-900 rounded flex items-center justify-center">
-                <div className="text-green-400 text-xs font-bold tracking-wider">AUTHORIZED ACCESS</div>
-              </div>
-              
-              {/* Traffic Light */}
-              <div className="absolute top-3 right-4 flex gap-1">
-                <div className={`w-2 h-2 rounded-full ${animationStep >= 1 ? 'bg-green-400' : 'bg-gray-600'}`}></div>
-                <div className={`w-2 h-2 rounded-full ${animationStep === 0 ? 'bg-red-500' : 'bg-gray-600'}`}></div>
+          {/* Modern Sliding Gate Animation */}
+          <div className="relative h-40 mb-6 bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg overflow-hidden border-4 border-slate-600 shadow-2xl">
+            {/* Control Panel */}
+            <div className="absolute top-2 left-2 right-2 h-8 bg-slate-950 rounded flex items-center justify-between px-3">
+              <div className="text-green-400 text-xs font-bold tracking-wider">SMART GATE SYSTEM</div>
+              <div className="flex gap-1">
+                <div className={`w-2 h-2 rounded-full transition-all duration-500 ${animationStep >= 1 ? 'bg-green-400 shadow-green-400 shadow-lg' : 'bg-red-500 shadow-red-500 shadow-lg'}`}></div>
+                <div className={`w-2 h-2 rounded-full transition-all duration-500 ${animationStep >= 2 ? 'bg-blue-400 shadow-blue-400 shadow-lg' : 'bg-gray-600'}`}></div>
               </div>
             </div>
             
-            {/* Left Gate Barrier */}
+            {/* Gate Columns */}
+            <div className="absolute bottom-0 left-4 w-4 h-24 bg-gradient-to-t from-slate-700 to-slate-600 rounded-t-lg"></div>
+            <div className="absolute bottom-0 right-4 w-4 h-24 bg-gradient-to-t from-slate-700 to-slate-600 rounded-t-lg"></div>
+            
+            {/* Sliding Gate Panels */}
             <div 
-              className={`absolute bottom-0 left-0 w-1/2 h-3 bg-gradient-to-r from-red-600 to-red-500 transition-all duration-2000 ease-out ${
-                animationStep >= 1 ? 'transform -rotate-90 -translate-x-6 -translate-y-6' : ''
+              className={`absolute bottom-8 left-6 w-20 h-16 bg-gradient-to-r from-orange-600 to-red-500 transition-all duration-2000 ease-out rounded-r-lg ${
+                animationStep >= 1 ? 'transform -translate-x-20 opacity-80' : ''
               }`}
               style={{
-                transformOrigin: 'left bottom',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                boxShadow: '0 4px 8px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.1)'
               }}
-            />
-            
-            {/* Right Gate Barrier */}
-            <div 
-              className={`absolute bottom-0 right-0 w-1/2 h-3 bg-gradient-to-l from-red-600 to-red-500 transition-all duration-2000 ease-out ${
-                animationStep >= 1 ? 'transform rotate-90 translate-x-6 -translate-y-6' : ''
-              }`}
-              style={{
-                transformOrigin: 'right bottom',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
-              }}
-            />
-            
-            {/* Road Surface */}
-            <div className="absolute bottom-0 w-full h-8 bg-gray-400">
-              <div className="w-full h-1 bg-yellow-300 mt-3"></div>
+            >
+              <div className="absolute inset-2 border-2 border-orange-300 rounded opacity-60"></div>
+              <div className="absolute top-2 left-2 w-2 h-2 bg-yellow-400 rounded-full"></div>
             </div>
             
-            {/* Car Animation */}
-            <div className="absolute bottom-4 left-4">
+            <div 
+              className={`absolute bottom-8 right-6 w-20 h-16 bg-gradient-to-l from-orange-600 to-red-500 transition-all duration-2000 ease-out rounded-l-lg ${
+                animationStep >= 1 ? 'transform translate-x-20 opacity-80' : ''
+              }`}
+              style={{
+                boxShadow: '0 4px 8px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.1)'
+              }}
+            >
+              <div className="absolute inset-2 border-2 border-orange-300 rounded opacity-60"></div>
+              <div className="absolute top-2 right-2 w-2 h-2 bg-yellow-400 rounded-full"></div>
+            </div>
+            
+            {/* Road Surface with Motion Lights */}
+            <div className="absolute bottom-0 w-full h-8 bg-gradient-to-r from-gray-600 via-gray-500 to-gray-600">
+              <div className={`w-full h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent mt-3 transition-all duration-1000 ${
+                animationStep >= 1 ? 'opacity-100 animate-pulse' : 'opacity-50'
+              }`}></div>
+              {/* Motion sensor lights */}
+              <div className="absolute top-1 left-8 flex gap-2">
+                {[0,1,2,3,4].map((i) => (
+                  <div
+                    key={i}
+                    className={`w-1 h-1 rounded-full transition-all duration-300 ${
+                      animationStep >= 1 && animationStep >= i/2 ? 'bg-cyan-400 shadow-cyan-400 shadow-lg' : 'bg-gray-700'
+                    }`}
+                    style={{ transitionDelay: `${i * 200}ms` }}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {/* Vehicle Animation */}
+            <div className="absolute bottom-4 left-2">
               <div 
-                className={`w-12 h-6 bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg transition-all duration-2500 flex items-center justify-center ${
-                  animationStep >= 2 ? 'transform translate-x-96' : ''
+                className={`w-16 h-8 bg-gradient-to-r from-indigo-600 to-purple-500 rounded-lg transition-all duration-3000 ease-in-out flex items-center justify-center shadow-lg ${
+                  animationStep >= 2 ? 'transform translate-x-80 scale-105' : ''
                 }`}
                 style={{
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.4)'
                 }}
               >
-                <div className="text-white text-xs">🚗</div>
+                <div className="text-white text-sm">🚙</div>
+                <div className={`absolute -bottom-1 left-2 w-2 h-2 bg-gray-800 rounded-full transition-all duration-3000 ${
+                  animationStep >= 2 ? 'animate-spin' : ''
+                }`}></div>
+                <div className={`absolute -bottom-1 right-2 w-2 h-2 bg-gray-800 rounded-full transition-all duration-3000 ${
+                  animationStep >= 2 ? 'animate-spin' : ''
+                }`}></div>
               </div>
             </div>
             
-            {/* Entrance Sign */}
-            <div className="absolute top-12 left-1/2 transform -translate-x-1/2">
-              <div className="bg-green-700 text-white px-3 py-1 rounded text-xs font-semibold">
-                ENTRY GATE
+            {/* Status Display */}
+            <div className="absolute top-14 left-1/2 transform -translate-x-1/2">
+              <div className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-500 ${
+                animationStep >= 1 
+                  ? 'bg-green-600 text-white shadow-green-500 shadow-lg' 
+                  : 'bg-red-600 text-white shadow-red-500 shadow-lg'
+              }`}>
+                {animationStep >= 1 ? '✓ ACCESS GRANTED' : '⚠ VERIFYING...'}
               </div>
             </div>
           </div>

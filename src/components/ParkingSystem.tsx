@@ -295,7 +295,7 @@ export const ParkingSystem = () => {
 
         {step === 'form' && <UserDetailsForm onSubmit={handleFormSubmit} onBack={() => setStep('entry')} />}
 
-        {step === 'auth' && <AuthenticationStep contactNumber={formData.contact_number} email={formData.email} onSuccess={handleAuthSuccess} onBack={() => setStep('form')} />}
+        {step === 'auth' && <AuthenticationStep contactNumber={formData.contact_number} onSuccess={handleAuthSuccess} onBack={() => setStep('form')} />}
 
         {step === 'plans' && <PlanSelection plans={planOptions} availableSpots={availableSpots} onSelect={handlePlanSelect} onBack={() => setStep('auth')} />}
 

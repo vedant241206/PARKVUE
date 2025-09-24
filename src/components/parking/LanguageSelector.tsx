@@ -29,7 +29,7 @@ export const LanguageSelector = ({ currentLanguage, onLanguageChange }: Language
             )}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="z-50">
+        <SelectContent className="z-[100] bg-background border border-border shadow-elevated">
           {languages.map((lang) => (
             <SelectItem key={lang.code} value={lang.code}>
               <div className="flex items-center gap-2">
