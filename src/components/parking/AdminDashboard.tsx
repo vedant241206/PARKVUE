@@ -224,6 +224,17 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
         return;
       }
 
+      // Helper function to escape CSV fields
+      const escapeCSV = (field: string) => {
+        if (field == null) return '';
+        const str = String(field);
+        // If field contains comma, quote, or newline, wrap in quotes and escape quotes
+        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      };
+
       // Convert to CSV format
       const headers = [
         'Name',
@@ -238,17 +249,17 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       ];
 
       const csvContent = [
-        headers.join(','),
+        headers.map(escapeCSV).join(','),
         ...allBookings.map(booking => [
-          booking.user_name,
-          new Date(booking.entry_time).toLocaleString('en-IN'),
-          booking.contact_number,
-          booking.email,
-          booking.vehicle_type.replace('wheeler', '-Wheeler'),
-          booking.vehicle_number,
-          booking.plan_type,
-          `${booking.payment_method} - ₹${booking.payment_amount}`,
-          booking.exit_time ? new Date(booking.exit_time).toLocaleString('en-IN') : 'NOT_EXITED'
+          escapeCSV(booking.user_name),
+          escapeCSV(new Date(booking.entry_time).toLocaleDateString('en-IN') + ' ' + new Date(booking.entry_time).toLocaleTimeString('en-IN')),
+          escapeCSV(booking.contact_number),
+          escapeCSV(booking.email),
+          escapeCSV(booking.vehicle_type.replace('wheeler', '-Wheeler')),
+          escapeCSV(booking.vehicle_number),
+          escapeCSV(booking.plan_type),
+          escapeCSV(`${booking.payment_method} - ₹${booking.payment_amount}`),
+          escapeCSV(booking.exit_time ? new Date(booking.exit_time).toLocaleDateString('en-IN') + ' ' + new Date(booking.exit_time).toLocaleTimeString('en-IN') : 'NOT_EXITED')
         ].join(','))
       ].join('\n');
 
