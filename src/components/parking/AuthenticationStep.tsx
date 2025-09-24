@@ -6,13 +6,11 @@ import { Label } from '@/components/ui/label';
 import { ArrowLeft, Shield, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
-
 interface AuthenticationStepProps {
   contactNumber: string;
   onSuccess: () => void;
   onBack: () => void;
 }
-
 export const AuthenticationStep = ({
   contactNumber,
   onSuccess,
@@ -20,8 +18,12 @@ export const AuthenticationStep = ({
 }: AuthenticationStepProps) => {
   const [phoneOtp, setPhoneOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
-  const { toast } = useToast();
-  const { t } = useLanguage();
+  const {
+    toast
+  } = useToast();
+  const {
+    t
+  } = useLanguage();
   const handleVerify = async () => {
     setIsVerifying(true);
 
@@ -81,12 +83,7 @@ export const AuthenticationStep = ({
               </div>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-800 mb-2">Demo Mode</h4>
-              <p className="text-sm text-blue-700">
-                Enter <strong>123456</strong> as the OTP to proceed
-              </p>
-            </div>
+            
             
 
             <div className="flex gap-4 pt-4">
