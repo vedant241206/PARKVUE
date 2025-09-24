@@ -73,13 +73,24 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
   const fetchDashboardData = async () => {
     try {
+      // Get admin session token
+      const sessionToken = localStorage.getItem('admin_session_token');
+      
+      // Set session token for RLS policies
+      if (sessionToken) {
+        await supabase.rpc('set_config', {
+          setting_name: 'app.admin_session_token',
+          setting_value: sessionToken
+        });
+      }
+
       // Fetch parking spots
       const { data: spotsData } = await supabase
         .from('parking_spots')
         .select('*')
         .order('spot_number');
 
-      // Fetch recent bookings
+      // Fetch recent bookings with admin session
       const { data: bookingsData } = await supabase
         .from('bookings')
         .select(`
@@ -187,6 +198,15 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
   const downloadExcelData = async () => {
     try {
+      // Set admin session token
+      const sessionToken = localStorage.getItem('admin_session_token');
+      if (sessionToken) {
+        await supabase.rpc('set_config', {
+          setting_name: 'app.admin_session_token',
+          setting_value: sessionToken
+        });
+      }
+
       // Fetch all bookings with parking spot details
       const { data: allBookings } = await supabase
         .from('bookings')
