@@ -34,6 +34,8 @@ export const PaymentStep = ({
   const handlePayment = async () => {
     if (isProcessing) return; // Prevent double clicks
     
+    setIsProcessing(true);
+    
     // Validate payment details based on method
     if (paymentData.method === 'card') {
       if (!paymentData.cardNumber || !paymentData.expiryDate || !paymentData.cvv || !paymentData.cardHolder) {
@@ -42,6 +44,7 @@ export const PaymentStep = ({
           description: "Please fill in all card details to proceed",
           variant: "destructive"
         });
+        setIsProcessing(false);
         return;
       }
     } else if (paymentData.method === 'online') {
@@ -51,11 +54,10 @@ export const PaymentStep = ({
           description: "Please provide UPI ID or select net banking",
           variant: "destructive"
         });
+        setIsProcessing(false);
         return;
       }
     }
-
-    setIsProcessing(true);
 
     // Simulate payment processing
     setTimeout(() => {
@@ -64,7 +66,6 @@ export const PaymentStep = ({
         description: `₹${plan.price + 10} has been charged successfully!`
       });
       onComplete(paymentData);
-      setIsProcessing(false);
     }, 2000);
   };
   const updatePaymentData = (field: keyof PaymentFormData, value: string) => {

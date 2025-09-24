@@ -79,15 +79,14 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
         .select('*')
         .order('spot_number');
 
-      // Fetch recent bookings with admin session
+      // Fetch ALL bookings
       const { data: bookingsData } = await supabase
         .from('bookings')
         .select(`
           *,
           parking_spots (*)
         `)
-        .order('created_at', { ascending: false })
-        .limit(10);
+        .order('created_at', { ascending: false});
 
       // Calculate stats
       if (spotsData) {
@@ -97,18 +96,9 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
         const occupiedSpots = spotsData.filter(spot => spot.is_occupied).length;
         const availableSpots = totalSpots - occupiedSpots;
         
-        // Get active bookings and revenue
-        const { data: activeBookingsData } = await supabase
-          .from('bookings')
-          .select('*')
-          .eq('status', 'active');
-
-        const { data: allBookingsData } = await supabase
-          .from('bookings')
-          .select('payment_amount');
-
-        const activeBookings = activeBookingsData?.length || 0;
-        const totalRevenue = allBookingsData?.reduce((sum, booking) => sum + (booking.payment_amount || 0), 0) || 0;
+        // Calculate active bookings and revenue from the fetched data
+        const activeBookings = bookingsData?.filter(booking => booking.status === 'active').length || 0;
+        const totalRevenue = bookingsData?.reduce((sum, booking) => sum + (Number(booking.payment_amount) || 0), 0) || 0;
 
         setStats({
           totalSpots,
@@ -160,7 +150,8 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       // First, make all parking spots available
       const { error: spotsError } = await supabase
         .from('parking_spots')
-        .update({ is_occupied: false });
+        .update({ is_occupied: false })
+        .gte('id', 0); // Update all records
 
       if (spotsError) {
         throw spotsError;
@@ -170,7 +161,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       const { error: bookingsError } = await supabase
         .from('bookings')
         .delete()
-        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+        .gte('created_at', '1900-01-01'); // Delete all records by using a date condition
 
       if (bookingsError) {
         throw bookingsError;
