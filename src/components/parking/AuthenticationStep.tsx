@@ -79,7 +79,7 @@ export const AuthenticationStep = ({
                 <p className="text-sm text-muted-foreground mb-2">
                   Code sent to: <span className="font-medium">{contactNumber}</span>
                 </p>
-                <Input value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder="Enter 6-digit OTP (123456)" maxLength={6} />
+                <Input value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder="Enter 6-digit OTP " maxLength={6} />
               </div>
             </div>
 
