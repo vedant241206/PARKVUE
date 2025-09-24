@@ -19,17 +19,17 @@ export const LanguageSelector = ({ currentLanguage, onLanguageChange }: Language
 
   return (
     <div className="flex items-center gap-2">
-      <Globe className="h-4 w-4 text-muted-foreground" />
+      <Globe className="h-4 w-4 text-primary-foreground/70" />
       <Select value={currentLanguage} onValueChange={onLanguageChange}>
-        <SelectTrigger className="w-32 bg-white text-black border-border">
+        <SelectTrigger className="w-32 bg-primary text-primary-foreground border-primary-foreground/20 hover:bg-primary/90">
           <div className="flex items-center gap-2">
             <span>{currentLang?.flag}</span>
-            <span className="text-black">{currentLang?.name}</span>
+            <span className="text-primary-foreground font-medium">{currentLang?.name}</span>
           </div>
         </SelectTrigger>
-        <SelectContent className="z-[999] bg-white border border-gray-300 shadow-lg">
+        <SelectContent className="z-[999] bg-background border border-border shadow-lg">
           {languages.map((lang) => (
-            <SelectItem key={lang.code} value={lang.code} className="hover:bg-gray-100">
+            <SelectItem key={lang.code} value={lang.code} className="hover:bg-accent focus:bg-accent">
               <div className="flex items-center gap-2">
                 <span>{lang.flag}</span>
                 <span>{lang.name}</span>

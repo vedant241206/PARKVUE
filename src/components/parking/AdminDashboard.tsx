@@ -167,12 +167,22 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
         throw bookingsError;
       }
 
+      // Reset states immediately
+      setStats({
+        totalSpots: spots.length,
+        occupiedSpots: 0,
+        availableSpots: spots.length,
+        activeBookings: 0,
+        totalRevenue: 0
+      });
+      setRecentBookings([]);
+
       toast({
         title: "System Reset Complete",
         description: "All bookings cleared and parking spots are now available"
       });
 
-      // Refresh data
+      // Refresh data to ensure consistency
       fetchDashboardData();
     } catch (error) {
       console.error('Failed to clear bookings:', error);

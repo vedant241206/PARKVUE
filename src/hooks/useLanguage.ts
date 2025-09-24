@@ -26,11 +26,22 @@ const translations: Translations = {
     'payment_details': 'Payment Details',
     'booking_confirmed': 'Booking Confirmed!',
     'download_receipt': 'Download Receipt',
-    'proceed_to_gate': 'Proceed to Gate'
+    'proceed_to_gate': 'Proceed to Gate',
+    'full_name': 'Full Name',
+    'contact_number': 'Contact Number',
+    'email_address': 'Email Address',
+    'vehicle_type': 'Vehicle Type',
+    'vehicle_number': 'Vehicle Number',
+    'continue': 'Continue',
+    'back': 'Back',
+    'next': 'Next',
+    'pay_now': 'Pay Now',
+    'processing': 'Processing...',
+    'total_amount': 'Total Amount'
   },
   hi: {
     'welcome': 'PARKVUE में आपका स्वागत है',
-    'tagline': 'खोजें, बुक करें और आसानी से पार्क करें',
+    'tagline': 'खोजें, बुक करें और आसानी से पपार्क करें',
     'skip_hassle': 'पार्किंग खोजने की परेशानी छोड़ें। तुरंत अपना स्पॉट असाइन कराएं!',
     'time_not_wasted': 'क्योंकि समय पार्किंग में बर्बाद नहीं होना चाहिए!',
     'normal_spots': 'सामान्य स्पॉट्स',
@@ -47,7 +58,18 @@ const translations: Translations = {
     'payment_details': 'भुगतान विवरण',
     'booking_confirmed': 'बुकिंग कन्फर्म!',
     'download_receipt': 'रसीद डाउनलोड करें',
-    'proceed_to_gate': 'गेट पर जाएं'
+    'proceed_to_gate': 'गेट पर जाएं',
+    'full_name': 'पूरा नाम',
+    'contact_number': 'संपर्क नंबर',
+    'email_address': 'ईमेल पता',
+    'vehicle_type': 'वाहन का प्रकार',
+    'vehicle_number': 'वाहन नंबर',
+    'continue': 'जारी रखें',
+    'back': 'वापस',
+    'next': 'अगला',
+    'pay_now': 'अभी भुगतान करें',
+    'processing': 'प्रसंस्करण...',
+    'total_amount': 'कुल राशि'
   },
   mr: {
     'welcome': 'PARKVUE मध्ये तुमचे स्वागत आहे',
@@ -68,7 +90,18 @@ const translations: Translations = {
     'payment_details': 'पेमेंट तपशील',
     'booking_confirmed': 'बुकिंग कन्फर्म!',
     'download_receipt': 'रसीद डाउनलोड करा',
-    'proceed_to_gate': 'गेटवर जा'
+    'proceed_to_gate': 'गेटवर जा',
+    'full_name': 'पूर्ण नाव',
+    'contact_number': 'संपर्क क्रमांक',
+    'email_address': 'ईमेल पत्ता',
+    'vehicle_type': 'वाहनाचा प्रकार',
+    'vehicle_number': 'वाहन क्रमांक',
+    'continue': 'चालू ठेवा',
+    'back': 'मागे',
+    'next': 'पुढे',
+    'pay_now': 'आता पैसे द्या',
+    'processing': 'प्रक्रिया करत आहे...',
+    'total_amount': 'एकूण रक्कम'
   }
 };
 

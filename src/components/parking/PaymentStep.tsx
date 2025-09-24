@@ -60,13 +60,23 @@ export const PaymentStep = ({
     }
 
     // Simulate payment processing
-    setTimeout(() => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       toast({
         title: "Payment Successful",
         description: `₹${plan.price + 10} has been charged successfully!`
       });
+      
       onComplete(paymentData);
-    }, 2000);
+    } catch (error) {
+      setIsProcessing(false);
+      toast({
+        title: "Payment Failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   const updatePaymentData = (field: keyof PaymentFormData, value: string) => {
     setPaymentData(prev => ({
