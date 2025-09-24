@@ -11,6 +11,8 @@ interface AdminDashboardProps {
   onBack: () => void;
 }
 
+import { useLanguage } from '@/hooks/useLanguage';
+
 interface DashboardStats {
   totalSpots: number;
   occupiedSpots: number;
@@ -30,6 +32,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [spots, setSpots] = useState<ParkingSpot[]>([]);
   const [recentBookings, setRecentBookings] = useState<(Booking & { parking_spots?: ParkingSpot })[]>([]);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchDashboardData();
@@ -275,9 +278,9 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
             <div>
               <CardTitle className="text-2xl flex items-center gap-2">
                 <BarChart3 className="h-6 w-6" />
-                Admin Dashboard
+                {t('admin_dashboard')}
               </CardTitle>
-              <p className="text-muted-foreground">Real-time parking management overview</p>
+              <p className="text-muted-foreground">{t('admin_overview')}</p>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={downloadExcelData}>

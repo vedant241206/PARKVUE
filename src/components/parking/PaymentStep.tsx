@@ -8,6 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, CreditCard, Smartphone, Building2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { PlanOption, PaymentFormData } from '@/types/parking';
+import { useLanguage } from '@/hooks/useLanguage';
+
 interface PaymentStepProps {
   plan: PlanOption;
   onComplete: (paymentData: PaymentFormData) => void;
@@ -28,9 +30,8 @@ export const PaymentStep = ({
     netBankingBank: ''
   });
   const [isProcessing, setIsProcessing] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const { t } = useLanguage();
   const handlePayment = async () => {
     if (isProcessing) return; // Prevent double clicks
     
@@ -40,8 +41,8 @@ export const PaymentStep = ({
     if (paymentData.method === 'card') {
       if (!paymentData.cardNumber || !paymentData.expiryDate || !paymentData.cvv || !paymentData.cardHolder) {
         toast({
-          title: "Payment Details Required",
-          description: "Please fill in all card details to proceed",
+          title: t('payment_details_required'),
+          description: t('fill_card_details'),
           variant: "destructive"
         });
         setIsProcessing(false);
@@ -50,8 +51,8 @@ export const PaymentStep = ({
     } else if (paymentData.method === 'online') {
       if (!paymentData.upiId && !paymentData.netBankingBank) {
         toast({
-          title: "Payment Details Required", 
-          description: "Please provide UPI ID or select net banking",
+          title: t('payment_details_required'), 
+          description: t('provide_upi_netbanking'),
           variant: "destructive"
         });
         setIsProcessing(false);
@@ -61,19 +62,19 @@ export const PaymentStep = ({
 
     // Simulate payment processing
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast({
-        title: "Payment Successful",
-        description: `₹${plan.price + 10} has been charged successfully!`
+        title: t('payment_successful'),
+        description: `₹${plan.price + 10} ${t('payment_charged')}`
       });
       
       onComplete(paymentData);
     } catch (error) {
       setIsProcessing(false);
       toast({
-        title: "Payment Failed",
-        description: "Something went wrong. Please try again.",
+        title: t('payment_failed'),
+        description: t('payment_error'),
         variant: "destructive"
       });
     }
@@ -87,8 +88,8 @@ export const PaymentStep = ({
   return <div className="max-w-2xl mx-auto">
       <Card className="shadow-elevated mb-6">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Payment Details</CardTitle>
-          <p className="text-muted-foreground">Complete your booking payment</p>
+          <CardTitle className="text-2xl">{t('payment_details')}</CardTitle>
+          <p className="text-muted-foreground">{t('complete_payment')}</p>
         </CardHeader>
       </Card>
 
@@ -184,7 +185,7 @@ export const PaymentStep = ({
               Back
             </Button>
             <Button onClick={handlePayment} className="flex-1" disabled={isProcessing}>
-              {isProcessing ? 'Processing...' : `Pay ₹${plan.price + 10}`}
+              {isProcessing ? t('processing') : `${t('pay_now')} ₹${plan.price + 10}`}
             </Button>
           </div>
         </CardContent>

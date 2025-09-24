@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Car, Crown, Zap, Check } from 'lucide-react';
 import type { PlanOption, ParkingSpot } from '@/types/parking';
+import { useLanguage } from '@/hooks/useLanguage';
+
 interface PlanSelectionProps {
   plans: PlanOption[];
   availableSpots: ParkingSpot[];
@@ -15,6 +17,8 @@ export const PlanSelection = ({
   onSelect,
   onBack
 }: PlanSelectionProps) => {
+  const { t } = useLanguage();
+  
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'car':
@@ -45,8 +49,8 @@ export const PlanSelection = ({
   return <div className="max-w-6xl mx-auto">
       <Card className="shadow-elevated mb-8">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Choose Your Parking Plan</CardTitle>
-          <p className="text-muted-foreground">Select the plan that best suits your needs</p>
+          <CardTitle className="text-2xl">{t('choose_plan')}</CardTitle>
+          <p className="text-muted-foreground">{t('select_best_plan')}</p>
         </CardHeader>
       </Card>
 
@@ -64,7 +68,7 @@ export const PlanSelection = ({
                 <p className="text-muted-foreground text-sm mb-3">{plan.description}</p>
                 <div className="flex items-center justify-center gap-2">
                   <Badge variant={isAvailable ? "default" : "destructive"}>
-                    {availableCount} spots available
+                    {availableCount} {t('spots_available')}
                   </Badge>
                 </div>
               </CardHeader>
@@ -87,7 +91,7 @@ export const PlanSelection = ({
                   className="w-full h-12 font-semibold transition-all duration-200 hover:scale-105"
                   variant={isAvailable ? "default" : "secondary"}
                 >
-                  {isAvailable ? 'Select Plan' : 'Not Available'}
+                  {isAvailable ? t('select_plan') : t('not_available')}
                 </Button>
               </CardContent>
             </Card>;
@@ -97,7 +101,7 @@ export const PlanSelection = ({
       <div className="text-center">
         <Button variant="outline" onClick={onBack}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Authentication
+          {t('back')}
         </Button>
       </div>
     </div>;

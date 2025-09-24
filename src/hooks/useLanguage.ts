@@ -37,7 +37,19 @@ const translations: Translations = {
     'next': 'Next',
     'pay_now': 'Pay Now',
     'processing': 'Processing...',
-    'total_amount': 'Total Amount'
+    'total_amount': 'Total Amount',
+    'admin_overview': 'Real-time parking management overview',
+    'select_best_plan': 'Select the plan that best suits your needs',
+    'spots_available': 'spots available',
+    'not_available': 'Not Available',
+    'payment_successful': 'Payment Successful',
+    'payment_charged': 'has been charged successfully!',
+    'payment_failed': 'Payment Failed',
+    'payment_error': 'Something went wrong. Please try again.',
+    'complete_payment': 'Complete your booking payment',
+    'payment_details_required': 'Payment Details Required',
+    'fill_card_details': 'Please fill in all card details to proceed',
+    'provide_upi_netbanking': 'Please provide UPI ID or select net banking'
   },
   hi: {
     'welcome': 'PARKVUE में आपका स्वागत है',
@@ -69,7 +81,19 @@ const translations: Translations = {
     'next': 'अगला',
     'pay_now': 'अभी भुगतान करें',
     'processing': 'प्रसंस्करण...',
-    'total_amount': 'कुल राशि'
+    'total_amount': 'कुल राशि',
+    'admin_overview': 'रियल-टाइम पार्किंग प्रबंधन अवलोकन',
+    'select_best_plan': 'वह योजना चुनें जो आपकी आवश्यकताओं के लिए सबसे उपयुक्त हो',
+    'spots_available': 'स्पॉट उपलब्ध',
+    'not_available': 'उपलब्ध नहीं',
+    'payment_successful': 'भुगतान सफल',
+    'payment_charged': 'सफलतापूर्वक चार्ज किया गया है!',
+    'payment_failed': 'भुगतान असफल',
+    'payment_error': 'कुछ गलत हुआ। कृपया पुनः प्रयास करें।',
+    'complete_payment': 'अपना बुकिंग भुगतान पूरा करें',
+    'payment_details_required': 'भुगतान विवरण आवश्यक',
+    'fill_card_details': 'आगे बढ़ने के लिए कृपया सभी कार्ड विवरण भरें',
+    'provide_upi_netbanking': 'कृपया UPI ID प्रदान करें या नेट बैंकिंग चुनें'
   },
   mr: {
     'welcome': 'PARKVUE मध्ये तुमचे स्वागत आहे',
@@ -101,7 +125,19 @@ const translations: Translations = {
     'next': 'पुढे',
     'pay_now': 'आता पैसे द्या',
     'processing': 'प्रक्रिया करत आहे...',
-    'total_amount': 'एकूण रक्कम'
+    'total_amount': 'एकूण रक्कम',
+    'admin_overview': 'रिअल-टाइम पार्किंग व्यवस्थापन विहंगावलोकन',
+    'select_best_plan': 'तुमच्या गरजांसाठी सर्वोत्तम योजना निवडा',
+    'spots_available': 'स्पॉट उपलब्ध',
+    'not_available': 'उपलब्ध नाही',
+    'payment_successful': 'पेमेंट यशस्वी',
+    'payment_charged': 'यशस्वीरित्या चार्ज केले आहे!',
+    'payment_failed': 'पेमेंट अयशस्वी',
+    'payment_error': 'काहीतरी चूक झाली. कृपया पुन्हा प्रयत्न करा.',
+    'complete_payment': 'तुमचे बुकिंग पेमेंट पूर्ण करा',
+    'payment_details_required': 'पेमेंट तपशील आवश्यक',
+    'fill_card_details': 'पुढे जाण्यासाठी कृपया सर्व कार्ड तपशील भरा',
+    'provide_upi_netbanking': 'कृपया UPI ID द्या किंवा नेट बँकिंग निवडा'
   }
 };
 
