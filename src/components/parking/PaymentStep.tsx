@@ -69,6 +69,7 @@ export const PaymentStep = ({
         description: `₹${plan.price + 10} ${t('payment_charged')}`
       });
       
+      setIsProcessing(false);
       onComplete(paymentData);
     } catch (error) {
       setIsProcessing(false);
