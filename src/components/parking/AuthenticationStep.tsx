@@ -5,11 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Shield, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/useLanguage';
+
 interface AuthenticationStepProps {
   contactNumber: string;
   onSuccess: () => void;
   onBack: () => void;
 }
+
 export const AuthenticationStep = ({
   contactNumber,
   onSuccess,
@@ -17,9 +20,8 @@ export const AuthenticationStep = ({
 }: AuthenticationStepProps) => {
   const [phoneOtp, setPhoneOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  const { t } = useLanguage();
   const handleVerify = async () => {
     setIsVerifying(true);
 
@@ -52,10 +54,10 @@ export const AuthenticationStep = ({
         <CardHeader className="text-center">
           <CardTitle className="text-2xl flex items-center justify-center gap-2">
             <Shield className="h-6 w-6" />
-            Verify Your Identity
+            {t('verify_identity')}
           </CardTitle>
           <p className="text-muted-foreground">
-            Verify your phone number to secure your booking
+            {t('verify_phone_secure')}
           </p>
         </CardHeader>
         <CardContent className="p-6">
@@ -65,10 +67,10 @@ export const AuthenticationStep = ({
               <div className="flex items-center justify-between">
                 <Label className="flex items-center gap-2">
                   <Phone className="h-4 w-4" />
-                  Phone Verification
+                  {t('phone_verification')}
                 </Label>
                 <Button variant="outline" size="sm" onClick={sendOtp}>
-                  Send OTP
+                  {t('send_otp')}
                 </Button>
               </div>
               <div className="bg-muted/50 p-3 rounded-lg">
@@ -93,7 +95,7 @@ export const AuthenticationStep = ({
                 Back
               </Button>
               <Button onClick={handleVerify} className="flex-1" disabled={isVerifying || !phoneOtp}>
-                {isVerifying ? 'Verifying...' : 'Authenticate'}
+                {isVerifying ? t('verifying') : t('authenticate')}
               </Button>
             </div>
           </div>

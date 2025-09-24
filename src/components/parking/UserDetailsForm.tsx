@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, User, Phone, Mail, Car } from 'lucide-react';
 import type { BookingFormData } from '@/types/parking';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface UserDetailsFormProps {
   onSubmit: (data: BookingFormData) => void;
@@ -13,6 +14,7 @@ interface UserDetailsFormProps {
 }
 
 export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<BookingFormData>({
     user_name: '',
     contact_number: '',
@@ -70,22 +72,22 @@ export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl flex items-center justify-center gap-2">
             <User className="h-6 w-6" />
-            Vehicle & Personal Details
+            {t('user_details_title')}
           </CardTitle>
-          <p className="text-muted-foreground">Please fill in your information to proceed</p>
+          <p className="text-muted-foreground">{t('fill_information')}</p>
         </CardHeader>
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="user_name" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                Full Name
+                {t('full_name')}
               </Label>
               <Input
                 id="user_name"
                 value={formData.user_name}
                 onChange={(e) => updateFormData('user_name', e.target.value)}
-                placeholder="Enter your full name"
+                placeholder={t('enter_full_name')}
                 className={errors.user_name ? 'border-destructive' : ''}
               />
               {errors.user_name && (
@@ -96,13 +98,13 @@ export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
             <div className="space-y-2">
               <Label htmlFor="contact_number" className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                Contact Number
+                {t('contact_number')}
               </Label>
               <Input
                 id="contact_number"
                 value={formData.contact_number}
                 onChange={(e) => updateFormData('contact_number', e.target.value)}
-                placeholder="Enter your 10-digit mobile number"
+                placeholder={t('enter_contact_number')}
                 maxLength={10}
                 className={errors.contact_number ? 'border-destructive' : ''}
               />
@@ -114,14 +116,14 @@ export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
             <div className="space-y-2">
               <Label htmlFor="email" className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                Email Address
+                {t('email_address')}
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => updateFormData('email', e.target.value)}
-                placeholder="Enter your email address"
+                placeholder={t('enter_email')}
                 className={errors.email ? 'border-destructive' : ''}
               />
               {errors.email && (
@@ -132,7 +134,7 @@ export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <Car className="h-4 w-4" />
-                Vehicle Type
+                {t('vehicle_type')}
               </Label>
               <Select
                 value={formData.vehicle_type}
@@ -154,13 +156,13 @@ export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
             <div className="space-y-2">
               <Label htmlFor="vehicle_number" className="flex items-center gap-2">
                 <Car className="h-4 w-4" />
-                Vehicle Number
+                {t('vehicle_number')}
               </Label>
               <Input
                 id="vehicle_number"
                 value={formData.vehicle_number}
                 onChange={(e) => updateFormData('vehicle_number', e.target.value.toUpperCase())}
-                placeholder="e.g., MH12AB1234"
+                placeholder={t('vehicle_placeholder')}
                 className={errors.vehicle_number ? 'border-destructive' : ''}
               />
               {errors.vehicle_number && (
@@ -176,10 +178,10 @@ export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
                 className="flex-1"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
+                {t('back')}
               </Button>
               <Button type="submit" className="flex-1">
-                Next: Verify Details
+                {t('next_verify')}
               </Button>
             </div>
           </form>

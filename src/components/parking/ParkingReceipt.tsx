@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle, MapPin, Clock, Car, CreditCard, Download } from 'lucide-react';
 import type { Booking, ParkingSpot, PlanOption } from '@/types/parking';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface ParkingReceiptProps {
   booking: Booking;
@@ -12,6 +13,7 @@ interface ParkingReceiptProps {
 }
 
 export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptProps) => {
+  const { t } = useLanguage();
   const entryTime = new Date(booking.entry_time);
 
   const handleDownload = () => {
@@ -177,9 +179,9 @@ export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptP
             <CheckCircle className="h-8 w-8 text-white" />
           </div>
           <CardTitle className="text-2xl text-parking-available">
-            Booking Confirmed!
+            {t('booking_confirmed')}
           </CardTitle>
-          <p className="text-muted-foreground">Your parking spot has been reserved</p>
+          <p className="text-muted-foreground">{t('spot_reserved')}</p>
         </CardHeader>
 
         <CardContent className="p-8 bg-white">
@@ -187,7 +189,7 @@ export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptP
           <div className="text-center mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-lg">
             <div className="flex items-center justify-center gap-2 mb-2">
               <MapPin className="h-6 w-6 text-primary" />
-              <span className="text-lg font-semibold">Your Parking Location</span>
+              <span className="text-lg font-semibold">{t('parking_location')}</span>
             </div>
             <div className="text-6xl font-bold text-primary mb-2">
               {spot.spot_number}
@@ -301,10 +303,10 @@ export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptP
             <div className="flex gap-4 pt-4">
               <Button variant="outline" onClick={handleDownload} className="flex-1">
                 <Download className="mr-2 h-4 w-4" />
-                Download Receipt
+                {t('download_receipt')}
               </Button>
               <Button onClick={onClose} className="flex-1">
-                Proceed to Gate
+                {t('proceed_to_gate')}
               </Button>
             </div>
           </div>

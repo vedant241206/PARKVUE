@@ -145,7 +145,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   };
 
   const clearAllBookings = async () => {
-    if (!confirm('Are you sure you want to clear all bookings and reset the parking system? This action cannot be undone.')) {
+    if (!confirm(t('confirm_clear_all'))) {
       return;
     }
 
@@ -154,44 +154,53 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       const { error: spotsError } = await supabase
         .from('parking_spots')
         .update({ is_occupied: false })
-        .gte('id', 0); // Update all records
+        .neq('id', 0); // Update all records (neq 0 means all records)
 
       if (spotsError) {
+        console.error('Spots update error:', spotsError);
         throw spotsError;
       }
 
-      // Then delete all bookings
+      // Then delete all bookings  
       const { error: bookingsError } = await supabase
         .from('bookings')
         .delete()
-        .gte('created_at', '1900-01-01'); // Delete all records by using a date condition
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
 
       if (bookingsError) {
+        console.error('Bookings delete error:', bookingsError);
         throw bookingsError;
       }
 
-      // Reset states immediately
+      // Force reset all states immediately
+      const totalSpots = spots.length;
       setStats({
-        totalSpots: spots.length,
+        totalSpots,
         occupiedSpots: 0,
-        availableSpots: spots.length,
+        availableSpots: totalSpots,
         activeBookings: 0,
         totalRevenue: 0
       });
       setRecentBookings([]);
 
+      // Update spots state to show all as available
+      const updatedSpots = spots.map(spot => ({ ...spot, is_occupied: false }));
+      setSpots(updatedSpots);
+
       toast({
-        title: "System Reset Complete",
-        description: "All bookings cleared and parking spots are now available"
+        title: t('system_reset_complete'),
+        description: t('all_bookings_cleared')
       });
 
-      // Refresh data to ensure consistency
-      fetchDashboardData();
+      // Refresh data after a short delay to ensure database is updated
+      setTimeout(() => {
+        fetchDashboardData();
+      }, 1000);
     } catch (error) {
       console.error('Failed to clear bookings:', error);
       toast({
-        title: "Reset Failed",
-        description: "Failed to reset the parking system",
+        title: t('reset_failed'),
+        description: t('reset_error'),
         variant: "destructive"
       });
     }
