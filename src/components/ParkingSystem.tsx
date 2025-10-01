@@ -18,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { BookingFormData, PlanOption, PaymentFormData, ParkingSpot } from '@/types/parking';
 export const ParkingSystem = () => {
-  const [step, setStep] = useState<'entry' | 'form' | 'imageUpload' | 'auth' | 'plans' | 'payment' | 'receipt' | 'gate' | 'exit' | 'admin' | 'admin-login'>('entry');
+  const [step, setStep] = useState<'entry' | 'imageUpload' | 'form' | 'auth' | 'plans' | 'payment' | 'receipt' | 'gate' | 'exit' | 'admin' | 'admin-login'>('entry');
   const [formData, setFormData] = useState<BookingFormData>({
     user_name: '',
     contact_number: '',
@@ -132,14 +132,14 @@ export const ParkingSystem = () => {
       fetchAvailableSpots(); // Refresh available spots
     }
   };
-  const handleFormSubmit = (data: BookingFormData) => {
-    setFormData(data);
-    setStep('imageUpload');
-  };
-
   const handleImageUploadSuccess = (numberPlate: string) => {
     setDetectedPlate(numberPlate);
     setFormData(prev => ({ ...prev, vehicle_number: numberPlate }));
+    setStep('form');
+  };
+
+  const handleFormSubmit = (data: BookingFormData) => {
+    setFormData(data);
     setStep('auth');
   };
   const handleAuthSuccess = () => {
@@ -287,7 +287,7 @@ export const ParkingSystem = () => {
                 </div>
 
                 <div className="flex gap-4 justify-center">
-                  <Button size="lg" onClick={() => setStep('form')} className="px-8">
+                  <Button size="lg" onClick={() => setStep('imageUpload')} className="px-8">
                     {t('book_parking')}
                   </Button>
                   <Button variant="outline" size="lg" onClick={() => setStep('exit')} className="px-8">
@@ -301,11 +301,11 @@ export const ParkingSystem = () => {
             </Card>
           </div>}
 
-        {step === 'form' && <UserDetailsForm onSubmit={handleFormSubmit} onBack={() => setStep('entry')} />}
+        {step === 'imageUpload' && <ImageUploadStep onSuccess={handleImageUploadSuccess} onBack={() => setStep('entry')} />}
 
-        {step === 'imageUpload' && <ImageUploadStep onSuccess={handleImageUploadSuccess} onBack={() => setStep('form')} />}
+        {step === 'form' && <UserDetailsForm onSubmit={handleFormSubmit} onBack={() => setStep('imageUpload')} initialVehicleNumber={detectedPlate} />}
 
-        {step === 'auth' && <AuthenticationStep contactNumber={formData.contact_number} onSuccess={handleAuthSuccess} onBack={() => setStep('imageUpload')} />}
+        {step === 'auth' && <AuthenticationStep contactNumber={formData.contact_number} onSuccess={handleAuthSuccess} onBack={() => setStep('form')} />}
 
         {step === 'plans' && <PlanSelection plans={planOptions} availableSpots={availableSpots} onSelect={handlePlanSelect} onBack={() => setStep('auth')} />}
 

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Upload, Camera, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
-import { pipeline } from '@huggingface/transformers';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ImageUploadStepProps {
   onSuccess: (numberPlate: string) => void;
@@ -27,49 +27,33 @@ export const ImageUploadStep = ({ onSuccess, onBack }: ImageUploadStepProps) => 
         description: "AI is detecting the number plate..."
       });
 
-      // Use Hugging Face OCR model (runs in browser, completely free)
-      const detector = await pipeline(
-        'image-to-text',
-        'Xenova/trocr-small-printed',
-        { device: 'wasm' }
-      );
+      console.log('Calling detect-number-plate function...');
 
-      const result = await detector(imageUrl);
-      let text = '';
-      
-      if (Array.isArray(result)) {
-        text = (result[0] as any)?.generated_text || '';
-      } else {
-        text = (result as any)?.generated_text || '';
+      const { data, error } = await supabase.functions.invoke('detect-number-plate', {
+        body: { imageBase64: imageUrl }
+      });
+
+      if (error) {
+        console.error('Function error:', error);
+        throw new Error(error.message || 'Failed to detect number plate');
       }
-      
-      // Clean up the text to extract number plate format
-      text = text.toUpperCase().replace(/[^A-Z0-9]/g, '');
-      
-      // Indian number plate format: AA00AA0000 or AA00A0000
-      const platePattern = /([A-Z]{2}\d{2}[A-Z]{1,2}\d{4})/;
-      const match = text.match(platePattern);
-      
-      if (match) {
-        setDetectedPlate(match[0]);
+
+      console.log('Detection response:', data);
+
+      if (data.success && data.numberPlate) {
+        setDetectedPlate(data.numberPlate);
         toast({
           title: "Number Plate Detected!",
-          description: `Found: ${match[0]}`
+          description: `Found: ${data.numberPlate}`
         });
       } else {
-        // If pattern doesn't match, use the cleaned text
-        setDetectedPlate(text.slice(0, 10));
-        toast({
-          title: "Text Detected",
-          description: "Please verify the number plate below",
-          variant: "default"
-        });
+        throw new Error(data.error || 'Could not detect number plate');
       }
     } catch (error) {
       console.error('OCR Error:', error);
       toast({
         title: "Detection Failed",
-        description: "Could not detect number plate. You can enter it manually.",
+        description: error.message || "Could not detect number plate. You can enter it manually in the next step.",
         variant: "destructive"
       });
       setDetectedPlate('');
@@ -81,6 +65,16 @@ export const ImageUploadStep = ({ onSuccess, onBack }: ImageUploadStepProps) => 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please upload an image smaller than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const imageUrl = e.target?.result as string;
@@ -95,6 +89,16 @@ export const ImageUploadStep = ({ onSuccess, onBack }: ImageUploadStepProps) => 
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please upload an image smaller than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const imageUrl = e.target?.result as string;
@@ -112,9 +116,16 @@ export const ImageUploadStep = ({ onSuccess, onBack }: ImageUploadStepProps) => 
   const handleNext = () => {
     if (detectedPlate) {
       onSuccess(detectedPlate);
+    } else if (uploadedImage) {
+      // Allow to continue even without detection
+      toast({
+        title: "No plate detected",
+        description: "You can enter the number plate manually in the next step",
+      });
+      onSuccess('');
     } else {
       toast({
-        title: "No Number Plate",
+        title: "No Image Uploaded",
         description: "Please upload a vehicle image first",
         variant: "destructive"
       });
@@ -130,7 +141,7 @@ export const ImageUploadStep = ({ onSuccess, onBack }: ImageUploadStepProps) => 
             Upload Vehicle Image
           </CardTitle>
           <p className="text-muted-foreground">
-            Upload a front view of your vehicle for automatic number plate detection
+            Upload a clear front view of your vehicle for automatic number plate detection
           </p>
         </CardHeader>
         <CardContent className="p-6">
@@ -159,7 +170,12 @@ export const ImageUploadStep = ({ onSuccess, onBack }: ImageUploadStepProps) => 
                       <CheckCircle className="h-5 w-5" />
                       <span>Number plate detected!</span>
                     </div>
-                  ) : null}
+                  ) : (
+                    <div className="text-muted-foreground">
+                      <p>Could not detect plate automatically</p>
+                      <p className="text-sm">You can enter it manually in the next step</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -209,7 +225,7 @@ export const ImageUploadStep = ({ onSuccess, onBack }: ImageUploadStepProps) => 
               <Button
                 onClick={handleNext}
                 className="flex-1"
-                disabled={isProcessing || !detectedPlate}
+                disabled={isProcessing || !uploadedImage}
               >
                 {isProcessing ? 'Processing...' : 'Next'}
               </Button>

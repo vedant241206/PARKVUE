@@ -11,16 +11,17 @@ import { useLanguage } from '@/hooks/useLanguage';
 interface UserDetailsFormProps {
   onSubmit: (data: BookingFormData) => void;
   onBack: () => void;
+  initialVehicleNumber?: string;
 }
 
-export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
+export const UserDetailsForm = ({ onSubmit, onBack, initialVehicleNumber }: UserDetailsFormProps) => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState<BookingFormData>({
     user_name: '',
     contact_number: '',
     email: '',
     vehicle_type: '4wheeler',
-    vehicle_number: ''
+    vehicle_number: initialVehicleNumber || ''
   });
 
   const [errors, setErrors] = useState<Partial<BookingFormData>>({});

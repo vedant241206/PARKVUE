@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.verify-otp]
 verify_jwt = false
+
+[functions.detect-number-plate]
+verify_jwt = false
