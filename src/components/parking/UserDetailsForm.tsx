@@ -158,6 +158,9 @@ export const UserDetailsForm = ({ onSubmit, onBack }: UserDetailsFormProps) => {
                 <Car className="h-4 w-4" />
                 {t('vehicle_number')}
               </Label>
+              <p className="text-xs text-muted-foreground">
+                You'll be able to upload a vehicle image in the next step for automatic detection
+              </p>
               <Input
                 id="vehicle_number"
                 value={formData.vehicle_number}

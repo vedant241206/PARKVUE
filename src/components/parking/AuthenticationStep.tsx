@@ -18,38 +18,84 @@ export const AuthenticationStep = ({
 }: AuthenticationStepProps) => {
   const [phoneOtp, setPhoneOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
-  const {
-    toast
-  } = useToast();
-  const {
-    t
-  } = useLanguage();
-  const handleVerify = async () => {
-    setIsVerifying(true);
+  const [isSending, setIsSending] = useState(false);
+  const [otpHash, setOtpHash] = useState('');
+  const { toast } = useToast();
+  const { t } = useLanguage();
 
-    // Simulate verification delay
-    setTimeout(() => {
-      if (phoneOtp === '123456') {
+  const sendOtp = async () => {
+    setIsSending(true);
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data, error } = await supabase.functions.invoke('send-otp', {
+        body: { phoneNumber: contactNumber }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        setOtpHash(data.otpHash);
+        toast({
+          title: "OTP Sent",
+          description: `Verification code sent to ${contactNumber}`
+        });
+      } else {
+        throw new Error(data?.error || 'Failed to send OTP');
+      }
+    } catch (error: any) {
+      console.error('Send OTP error:', error);
+      toast({
+        title: "Failed to Send OTP",
+        description: error.message || "Please try again",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleVerify = async () => {
+    if (!otpHash) {
+      toast({
+        title: "Send OTP First",
+        description: "Please request an OTP before verifying",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data, error } = await supabase.functions.invoke('verify-otp', {
+        body: { 
+          phoneNumber: contactNumber,
+          otp: phoneOtp,
+          otpHash: otpHash
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
         toast({
           title: "Verification Successful",
-          description: "Your identity has been verified successfully!"
+          description: "Your phone number has been verified!"
         });
         onSuccess();
       } else {
-        toast({
-          title: "Verification Failed",
-          description: "Please enter the correct OTP (123456)",
-          variant: "destructive"
-        });
+        throw new Error(data?.error || 'Invalid OTP');
       }
+    } catch (error: any) {
+      console.error('Verify OTP error:', error);
+      toast({
+        title: "Verification Failed",
+        description: error.message || "Please enter the correct OTP",
+        variant: "destructive"
+      });
+    } finally {
       setIsVerifying(false);
-    }, 1500);
-  };
-  const sendOtp = () => {
-    toast({
-      title: "OTP Sent",
-      description: "Verification code sent to your phone. Use 123456 for demo."
-    });
+    }
   };
   return <div className="max-w-2xl mx-auto">
       <Card className="shadow-elevated">
@@ -71,8 +117,13 @@ export const AuthenticationStep = ({
                   <Phone className="h-4 w-4" />
                   {t('phone_verification')}
                 </Label>
-                <Button variant="outline" size="sm" onClick={sendOtp}>
-                  {t('send_otp')}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={sendOtp}
+                  disabled={isSending || !!otpHash}
+                >
+                  {isSending ? 'Sending...' : otpHash ? 'OTP Sent' : t('send_otp')}
                 </Button>
               </div>
               <div className="bg-muted/50 p-3 rounded-lg">

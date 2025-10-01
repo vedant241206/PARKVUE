@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Car, Zap, Crown } from 'lucide-react';
 import { UserDetailsForm } from './parking/UserDetailsForm';
+import { ImageUploadStep } from './parking/ImageUploadStep';
 import { AuthenticationStep } from './parking/AuthenticationStep';
 import { PlanSelection } from './parking/PlanSelection';
 import { PaymentStep } from './parking/PaymentStep';
@@ -17,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { BookingFormData, PlanOption, PaymentFormData, ParkingSpot } from '@/types/parking';
 export const ParkingSystem = () => {
-  const [step, setStep] = useState<'entry' | 'form' | 'auth' | 'plans' | 'payment' | 'receipt' | 'gate' | 'exit' | 'admin' | 'admin-login'>('entry');
+  const [step, setStep] = useState<'entry' | 'form' | 'imageUpload' | 'auth' | 'plans' | 'payment' | 'receipt' | 'gate' | 'exit' | 'admin' | 'admin-login'>('entry');
   const [formData, setFormData] = useState<BookingFormData>({
     user_name: '',
     contact_number: '',
@@ -25,6 +26,7 @@ export const ParkingSystem = () => {
     vehicle_type: '4wheeler',
     vehicle_number: ''
   });
+  const [detectedPlate, setDetectedPlate] = useState<string>('');
   const [selectedPlan, setSelectedPlan] = useState<PlanOption | null>(null);
   const [paymentData, setPaymentData] = useState<PaymentFormData | null>(null);
   const [assignedSpot, setAssignedSpot] = useState<ParkingSpot | null>(null);
@@ -132,6 +134,12 @@ export const ParkingSystem = () => {
   };
   const handleFormSubmit = (data: BookingFormData) => {
     setFormData(data);
+    setStep('imageUpload');
+  };
+
+  const handleImageUploadSuccess = (numberPlate: string) => {
+    setDetectedPlate(numberPlate);
+    setFormData(prev => ({ ...prev, vehicle_number: numberPlate }));
     setStep('auth');
   };
   const handleAuthSuccess = () => {
@@ -295,7 +303,9 @@ export const ParkingSystem = () => {
 
         {step === 'form' && <UserDetailsForm onSubmit={handleFormSubmit} onBack={() => setStep('entry')} />}
 
-        {step === 'auth' && <AuthenticationStep contactNumber={formData.contact_number} onSuccess={handleAuthSuccess} onBack={() => setStep('form')} />}
+        {step === 'imageUpload' && <ImageUploadStep onSuccess={handleImageUploadSuccess} onBack={() => setStep('form')} />}
+
+        {step === 'auth' && <AuthenticationStep contactNumber={formData.contact_number} onSuccess={handleAuthSuccess} onBack={() => setStep('imageUpload')} />}
 
         {step === 'plans' && <PlanSelection plans={planOptions} availableSpots={availableSpots} onSelect={handlePlanSelect} onBack={() => setStep('auth')} />}
 
