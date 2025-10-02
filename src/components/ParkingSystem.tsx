@@ -132,9 +132,13 @@ export const ParkingSystem = () => {
       fetchAvailableSpots(); // Refresh available spots
     }
   };
-  const handleImageUploadSuccess = (numberPlate: string) => {
+  const handleImageUploadSuccess = (numberPlate: string, vehicleType?: string) => {
     setDetectedPlate(numberPlate);
-    setFormData(prev => ({ ...prev, vehicle_number: numberPlate }));
+    setFormData(prev => ({ 
+      ...prev, 
+      vehicle_number: numberPlate,
+      vehicle_type: vehicleType as '2wheeler' | '3wheeler' | '4wheeler' || prev.vehicle_type
+    }));
     setStep('form');
   };
 
@@ -303,7 +307,7 @@ export const ParkingSystem = () => {
 
         {step === 'imageUpload' && <ImageUploadStep onSuccess={handleImageUploadSuccess} onBack={() => setStep('entry')} />}
 
-        {step === 'form' && <UserDetailsForm onSubmit={handleFormSubmit} onBack={() => setStep('imageUpload')} initialVehicleNumber={detectedPlate} />}
+        {step === 'form' && <UserDetailsForm onSubmit={handleFormSubmit} onBack={() => setStep('imageUpload')} initialVehicleNumber={detectedPlate} initialVehicleType={formData.vehicle_type} />}
 
         {step === 'auth' && <AuthenticationStep contactNumber={formData.contact_number} onSuccess={handleAuthSuccess} onBack={() => setStep('form')} />}
 

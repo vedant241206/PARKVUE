@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
 interface ImageUploadStepProps {
-  onSuccess: (numberPlate: string) => void;
+  onSuccess: (numberPlate: string, vehicleType?: string) => void;
   onBack: () => void;
 }
 export const ImageUploadStep = ({
@@ -15,6 +15,7 @@ export const ImageUploadStep = ({
 }: ImageUploadStepProps) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [detectedPlate, setDetectedPlate] = useState<string>('');
+  const [detectedVehicleType, setDetectedVehicleType] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
@@ -46,11 +47,16 @@ export const ImageUploadStep = ({
       console.log('Detection response:', data);
       if (data.success && data.numberPlate) {
         setDetectedPlate(data.numberPlate);
+        setDetectedVehicleType(data.vehicleType || '4wheeler');
         toast({
-          title: "Number Plate Detected!",
-          description: `Found: ${data.numberPlate}`
+          title: "Detection Complete!",
+          description: `Number Plate: ${data.numberPlate} | Vehicle: ${data.vehicleType || '4wheeler'}`
         });
       } else {
+        // Even if plate detection failed, we might have vehicle type
+        if (data.vehicleType) {
+          setDetectedVehicleType(data.vehicleType);
+        }
         throw new Error(data.error || 'Could not detect number plate');
       }
     } catch (error) {
@@ -113,14 +119,14 @@ export const ImageUploadStep = ({
   };
   const handleNext = () => {
     if (detectedPlate) {
-      onSuccess(detectedPlate);
+      onSuccess(detectedPlate, detectedVehicleType);
     } else if (uploadedImage) {
       // Allow to continue even without detection
       toast({
         title: "No plate detected",
         description: "You can enter the number plate manually in the next step"
       });
-      onSuccess('');
+      onSuccess('', detectedVehicleType);
     } else {
       toast({
         title: "No Image Uploaded",

@@ -12,15 +12,16 @@ interface UserDetailsFormProps {
   onSubmit: (data: BookingFormData) => void;
   onBack: () => void;
   initialVehicleNumber?: string;
+  initialVehicleType?: string;
 }
 
-export const UserDetailsForm = ({ onSubmit, onBack, initialVehicleNumber }: UserDetailsFormProps) => {
+export const UserDetailsForm = ({ onSubmit, onBack, initialVehicleNumber, initialVehicleType }: UserDetailsFormProps) => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState<BookingFormData>({
     user_name: '',
     contact_number: '',
     email: '',
-    vehicle_type: '4wheeler',
+    vehicle_type: (initialVehicleType as '2wheeler' | '3wheeler' | '4wheeler') || '4wheeler',
     vehicle_number: initialVehicleNumber || ''
   });
 

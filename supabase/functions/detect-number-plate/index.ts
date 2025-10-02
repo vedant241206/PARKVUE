@@ -40,7 +40,7 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: 'Analyze this vehicle image and extract ONLY the license/number plate text. Return just the plate number in capital letters with no spaces, hyphens, or special characters. For Indian number plates, format should be like: DL01AB1234 or MH02CD5678. If you cannot detect a clear number plate, return "NOT_DETECTED".'
+                text: 'Analyze this vehicle image and provide TWO things in this exact format:\n\nNUMBER_PLATE: [plate number]\nVEHICLE_TYPE: [type]\n\nFor NUMBER_PLATE: Extract the license plate text in capital letters with no spaces, hyphens, or special characters (e.g., DL01AB1234). If not detectable, write "NOT_DETECTED".\n\nFor VEHICLE_TYPE: Identify if this is a "2wheeler" (bike/scooter/motorcycle), "3wheeler" (auto-rickshaw), or "4wheeler" (car/SUV/van/truck). Return exactly one of these three values.'
               },
               {
                 type: 'image_url',
@@ -62,19 +62,26 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    const detectedText = data.choices[0].message.content.trim().toUpperCase();
+    const detectedText = data.choices[0].message.content.trim();
     
     console.log('Detected text:', detectedText);
 
-    // Clean and validate the detected text
-    let numberPlate = detectedText.replace(/[^A-Z0-9]/g, '');
+    // Parse the response
+    const numberPlateMatch = detectedText.match(/NUMBER_PLATE:\s*([A-Z0-9]+)/i);
+    const vehicleTypeMatch = detectedText.match(/VEHICLE_TYPE:\s*(2wheeler|3wheeler|4wheeler)/i);
     
+    const numberPlate = numberPlateMatch ? numberPlateMatch[1].toUpperCase().replace(/[^A-Z0-9]/g, '') : 'NOT_DETECTED';
+    const vehicleType = vehicleTypeMatch ? vehicleTypeMatch[1].toLowerCase() : '4wheeler';
+    
+    console.log('Parsed - Number Plate:', numberPlate, 'Vehicle Type:', vehicleType);
+
     if (numberPlate === 'NOT_DETECTED' || numberPlate.length < 6 || numberPlate.length > 15) {
       return new Response(
         JSON.stringify({ 
           success: false,
           error: 'Could not detect a valid number plate',
-          detectedText: numberPlate
+          detectedText: numberPlate,
+          vehicleType: vehicleType
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -86,7 +93,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        numberPlate: numberPlate
+        numberPlate: numberPlate,
+        vehicleType: vehicleType
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
