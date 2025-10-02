@@ -32,7 +32,8 @@ export const PaymentStep = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
-  const handlePayment = async () => {
+  const handlePayment = async (e: React.MouseEvent) => {
+    e.preventDefault();
     if (isProcessing) return; // Prevent double clicks
     
     setIsProcessing(true);

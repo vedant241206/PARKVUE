@@ -9,12 +9,12 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
   const [phase, setPhase] = useState<'approach' | 'scan' | 'verify' | 'unlock' | 'open' | 'proceed'>('approach');
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setPhase('scan'), 3000);
-    const timer2 = setTimeout(() => setPhase('verify'), 6000);
-    const timer3 = setTimeout(() => setPhase('unlock'), 9000);
-    const timer4 = setTimeout(() => setPhase('open'), 12000);
-    const timer5 = setTimeout(() => setPhase('proceed'), 15000);
-    const timer6 = setTimeout(() => onComplete(), 18000);
+    const timer1 = setTimeout(() => setPhase('scan'), 1000);
+    const timer2 = setTimeout(() => setPhase('verify'), 2000);
+    const timer3 = setTimeout(() => setPhase('unlock'), 3000);
+    const timer4 = setTimeout(() => setPhase('open'), 4000);
+    const timer5 = setTimeout(() => setPhase('proceed'), 5000);
+    const timer6 = setTimeout(() => onComplete(), 6000);
 
     return () => {
       clearTimeout(timer1);
@@ -56,10 +56,10 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
                   {/* Car Icon - Always Visible */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="text-5xl filter drop-shadow-xl" 
-                          style={{ 
-                            animation: phase === 'approach' ? 'float 3s ease-in-out infinite' :
-                                     phase === 'proceed' ? 'drive-through 4s ease-in-out' : 'none'
-                          }}>
+                           style={{ 
+                             animation: phase === 'approach' ? 'float 1s ease-in-out infinite' :
+                                      phase === 'proceed' ? 'drive-through 1.3s ease-in-out' : 'none'
+                           }}>
                       🚗
                     </span>
                   </div>
@@ -76,19 +76,19 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
                       <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-green-400 to-transparent"
                            style={{ 
                              top: '20%',
-                             animation: 'scan-vertical 3s ease-in-out infinite'
+                             animation: 'scan-vertical 1s ease-in-out infinite'
                            }} />
                       <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
                            style={{ 
                              top: '50%',
-                             animation: 'scan-vertical 3s ease-in-out infinite reverse',
-                             animationDelay: '0.5s'
+                             animation: 'scan-vertical 1s ease-in-out infinite reverse',
+                             animationDelay: '0.17s'
                            }} />
                       <div className="absolute w-full h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent"
                            style={{ 
                              top: '80%',
-                             animation: 'scan-vertical 3s ease-in-out infinite',
-                             animationDelay: '1s'
+                             animation: 'scan-vertical 1s ease-in-out infinite',
+                             animationDelay: '0.33s'
                            }} />
                     </div>
                   )}
@@ -110,9 +110,9 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
                   {(phase === 'open' || phase === 'proceed') && (
                     <div className="absolute inset-0 rounded-xl overflow-hidden">
                       {/* Gate Doors Opening */}
-                      <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-blue-500/40 to-transparent transition-transform duration-[4000ms] ease-out"
+                      <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-blue-500/40 to-transparent transition-transform duration-[1333ms] ease-out"
                            style={{ transform: 'translateX(-100%)' }} />
-                      <div className="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-blue-500/40 to-transparent transition-transform duration-[4000ms] ease-out"
+                      <div className="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-blue-500/40 to-transparent transition-transform duration-[1333ms] ease-out"
                            style={{ transform: 'translateX(100%)' }} />
                       <div className="absolute inset-0 bg-green-400/10 animate-pulse" />
                     </div>
@@ -178,7 +178,7 @@ export const GateAnimation = ({ onComplete }: GateAnimationProps) => {
           {/* Animated Progress Bar */}
           <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden mb-4">
             <div 
-              className="h-full bg-gradient-to-r from-blue-500 via-cyan-500 to-green-500 transition-all duration-[3000ms] ease-out"
+              className="h-full bg-gradient-to-r from-blue-500 via-cyan-500 to-green-500 transition-all duration-[1000ms] ease-out"
               style={{ 
                 width: phase === 'approach' ? '15%' : 
                        phase === 'scan' ? '30%' : 
