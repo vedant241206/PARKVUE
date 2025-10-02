@@ -37,7 +37,7 @@ export const AuthenticationStep = ({
         setOtpHash(data.otpHash);
         toast({
           title: "OTP Sent",
-          description: `Verification code sent to ${contactNumber}`
+          description: `Verification code sent to ${contactNumber}`,
         });
       } else {
         throw new Error(data?.error || 'Failed to send OTP');
@@ -130,7 +130,14 @@ export const AuthenticationStep = ({
                 <p className="text-sm text-muted-foreground mb-2">
                   Code sent to: <span className="font-medium">{contactNumber}</span>
                 </p>
-                <Input value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder="Enter 6-digit OTP " maxLength={6} />
+                {otpHash && (
+                  <div className="mb-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                    <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                      🔧 Development Mode: Use OTP <span className="font-mono font-bold">123456</span>
+                    </p>
+                  </div>
+                )}
+                <Input value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder="Enter 6-digit OTP" maxLength={6} />
               </div>
             </div>
 
