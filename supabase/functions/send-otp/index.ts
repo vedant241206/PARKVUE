@@ -17,38 +17,40 @@ serve(async (req) => {
       throw new Error('Phone number is required');
     }
 
-    const MTALKZ_API_KEY = Deno.env.get('MTALKZ_API_KEY');
+    const FAST2SMS_API_KEY = Deno.env.get('FAST2SMS_API_KEY');
     
-    if (!MTALKZ_API_KEY) {
-      throw new Error('MTALKZ_API_KEY not configured');
+    if (!FAST2SMS_API_KEY) {
+      throw new Error('FAST2SMS_API_KEY not configured');
     }
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // Send OTP via MTALKZ API
-    // Format: https://api.mtalkz.com/api/v1/send-otp
-    const mtalkzResponse = await fetch('https://api.mtalkz.com/api/v1/send-otp', {
+    // Send OTP via Fast2SMS API
+    const fast2smsResponse = await fetch('https://www.fast2sms.com/dev/bulkV2', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${MTALKZ_API_KEY}`
+        'authorization': FAST2SMS_API_KEY,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        phone: phoneNumber,
-        otp: otp,
-        template_id: 'OTP_TEMPLATE', // You may need to configure this in MTALKZ
+        route: 'otp',
+        sender_id: 'TXTIND',
+        message: `Your OTP is ${otp}. Valid for 5 minutes.`,
+        variables_values: otp,
+        flash: 0,
+        numbers: phoneNumber.replace(/\D/g, '') // Remove non-digits
       })
     });
 
-    const mtalkzData = await mtalkzResponse.json();
+    const fast2smsData = await fast2smsResponse.json();
     
-    if (!mtalkzResponse.ok) {
-      console.error('MTALKZ API Error:', mtalkzData);
-      throw new Error(mtalkzData.message || 'Failed to send OTP');
+    if (!fast2smsResponse.ok || !fast2smsData.return) {
+      console.error('Fast2SMS API Error:', fast2smsData);
+      throw new Error(fast2smsData.message || 'Failed to send OTP');
     }
 
-    console.log('OTP sent successfully to:', phoneNumber);
+    console.log('OTP sent successfully to:', phoneNumber, 'Response:', fast2smsData);
     
     // Store OTP temporarily (in production, use Redis or similar)
     // For now, we'll return the OTP hash for verification
