@@ -32,9 +32,8 @@ export const PaymentStep = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
-  const handlePayment = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (isProcessing) return; // Prevent double clicks
+  const handlePayment = async () => {
+    if (isProcessing) return;
     
     setIsProcessing(true);
     
@@ -191,11 +190,26 @@ export const PaymentStep = ({
           </Tabs>
 
           <div className="flex gap-4 pt-6">
-            <Button type="button" variant="outline" onClick={onBack} className="flex-1" disabled={isProcessing}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onBack} 
+              className="flex-1" 
+              disabled={isProcessing}
+            >
               <ArrowLeft className="mr-2 h-4 w-4" />
               {t('back')}
             </Button>
-            <Button type="button" onClick={handlePayment} className="flex-1" disabled={isProcessing}>
+            <Button 
+              type="submit" 
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handlePayment();
+              }} 
+              className="flex-1" 
+              disabled={isProcessing}
+            >
               {isProcessing ? t('processing') : `${t('pay_now')} ₹${plan.price + 10}`}
             </Button>
           </div>

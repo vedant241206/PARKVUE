@@ -148,9 +148,9 @@ export const UserDetailsForm = ({ onSubmit, onBack, initialVehicleNumber, initia
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="2wheeler">2-Wheeler (Bike/Scooter)</SelectItem>
-                  <SelectItem value="3wheeler">3-Wheeler (Auto/Rickshaw)</SelectItem>
-                  <SelectItem value="4wheeler">4-Wheeler (Car/SUV)</SelectItem>
+                  <SelectItem value="2wheeler">{t('2wheeler')}</SelectItem>
+                  <SelectItem value="3wheeler">{t('3wheeler')}</SelectItem>
+                  <SelectItem value="4wheeler">{t('4wheeler')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

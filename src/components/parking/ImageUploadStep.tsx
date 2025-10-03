@@ -28,8 +28,8 @@ export const ImageUploadStep = ({
     setIsProcessing(true);
     try {
       toast({
-        title: "Processing Image",
-        description: "AI is detecting the number plate..."
+        title: t('processing_image'),
+        description: t('ai_detecting')
       });
       console.log('Calling detect-number-plate function...');
       const {
@@ -77,8 +77,8 @@ export const ImageUploadStep = ({
       // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title: "File too large",
-          description: "Please upload an image smaller than 5MB",
+          title: t('file_too_large'),
+          description: t('upload_smaller_5mb'),
           variant: "destructive"
         });
         return;
@@ -99,8 +99,8 @@ export const ImageUploadStep = ({
       // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title: "File too large",
-          description: "Please upload an image smaller than 5MB",
+          title: t('file_too_large'),
+          description: t('upload_smaller_5mb'),
           variant: "destructive"
         });
         return;
@@ -129,8 +129,8 @@ export const ImageUploadStep = ({
       onSuccess('', detectedVehicleType);
     } else {
       toast({
-        title: "No Image Uploaded",
-        description: "Please upload a vehicle image first",
+        title: t('no_image_uploaded'),
+        description: t('upload_vehicle_first'),
         variant: "destructive"
       });
     }
@@ -140,10 +140,10 @@ export const ImageUploadStep = ({
         <CardHeader className="text-center">
           <CardTitle className="text-2xl flex items-center justify-center gap-2">
             <Camera className="h-6 w-6" />
-            Upload Vehicle Image
+            {t('upload_vehicle_image')}
           </CardTitle>
           <p className="text-muted-foreground">
-            Upload a clear front view of your vehicle for automatic number plate detection
+            {t('upload_clear_front')}
           </p>
         </CardHeader>
         <CardContent className="p-6">
@@ -154,10 +154,10 @@ export const ImageUploadStep = ({
                   <img src={uploadedImage} alt="Uploaded vehicle" className="max-h-64 mx-auto rounded-lg" />
                   {isProcessing ? <div className="flex items-center justify-center gap-2 text-primary">
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      <span>Detecting number plate...</span>
+                      <span>{t('detecting_plate')}</span>
                     </div> : detectedPlate ? <div className="flex items-center justify-center gap-2 text-green-600">
                       <CheckCircle className="h-5 w-5" />
-                      <span>Number plate detected!</span>
+                      <span>{t('detected')}!</span>
                     </div> : <div className="text-muted-foreground">
                       <p>Could not detect plate automatically</p>
                       <p className="text-sm">You can enter it manually in the next step</p>
@@ -165,9 +165,9 @@ export const ImageUploadStep = ({
                 </div> : <div className="space-y-4">
                   <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
                   <div>
-                    <p className="font-medium">Drop your image here or click to upload</p>
+                    <p className="font-medium">{t('drop_image_or_click')}</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Supports JPG, PNG (Max 5MB)
+                      {t('supports_jpg_png')}
                     </p>
                   </div>
                 </div>}
@@ -189,10 +189,10 @@ export const ImageUploadStep = ({
             <div className="flex gap-4 pt-4">
               <Button type="button" variant="outline" onClick={onBack} className="flex-1" disabled={isProcessing}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
+                {t('back')}
               </Button>
               <Button onClick={handleNext} className="flex-1" disabled={isProcessing || !uploadedImage}>
-                {isProcessing ? 'Processing...' : 'Next'}
+                {isProcessing ? t('processing') : t('next')}
               </Button>
             </div>
           </div>
