@@ -58,6 +58,26 @@ export const ParkingSystem = () => {
   }];
   useEffect(() => {
     fetchAvailableSpots();
+    
+    // Set up real-time subscription for spot changes
+    const subscription = supabase
+      .channel('parking-spots-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'parking_spots'
+        },
+        () => {
+          fetchAvailableSpots();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
   const fetchAvailableSpots = async () => {
     const {
