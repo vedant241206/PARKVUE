@@ -98,7 +98,7 @@ export const PaymentStep = ({
       {/* Order Summary */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-lg">Order Summary</CardTitle>
+          <CardTitle className="text-lg">{t('order_summary')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-center mb-2">
@@ -106,11 +106,11 @@ export const PaymentStep = ({
             <span>₹{plan.price}</span>
           </div>
           <div className="flex justify-between items-center mb-2 text-sm text-muted-foreground">
-            <span>Service Charge</span>
+            <span>{t('service_charge')}</span>
             <span>₹10</span>
           </div>
           <div className="border-t pt-2 flex justify-between items-center font-bold">
-            <span>Total Amount</span>
+            <span>{t('total_amount')}</span>
             <span>₹{plan.price + 10}</span>
           </div>
         </CardContent>
@@ -122,23 +122,23 @@ export const PaymentStep = ({
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="card" className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
-                Card Payment
+                {t('card_payment')}
               </TabsTrigger>
               <TabsTrigger value="online" className="flex items-center gap-2">
                 <Smartphone className="h-4 w-4" />
-                Online Payment
+                {t('online_payment')}
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="card" className="space-y-4 mt-6">
               <div className="space-y-2">
-                <Label htmlFor="cardNumber">Card Number</Label>
+                <Label htmlFor="cardNumber">{t('card_number')}</Label>
                 <Input id="cardNumber" value={paymentData.cardNumber} onChange={e => updatePaymentData('cardNumber', e.target.value)} placeholder="1234 5678 9012 3456" maxLength={19} />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="expiryDate">Expiry Date</Label>
+                  <Label htmlFor="expiryDate">{t('expiry_date')}</Label>
                   <Input id="expiryDate" value={paymentData.expiryDate} onChange={e => updatePaymentData('expiryDate', e.target.value)} placeholder="MM/YY" maxLength={5} />
                 </div>
                 <div className="space-y-2">
@@ -148,7 +148,7 @@ export const PaymentStep = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="cardHolder">Cardholder Name</Label>
+                <Label htmlFor="cardHolder">{t('cardholder_name')}</Label>
                 <Input id="cardHolder" value={paymentData.cardHolder} onChange={e => updatePaymentData('cardHolder', e.target.value)} placeholder="John Doe" />
               </div>
             </TabsContent>
@@ -156,13 +156,13 @@ export const PaymentStep = ({
             <TabsContent value="online" className="space-y-4 mt-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Choose Payment Method</Label>
+                  <Label>{t('choose_payment_method')}</Label>
                   <Select value={paymentData.netBankingBank} onValueChange={value => updatePaymentData('netBankingBank', value)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select payment method" />
+                      <SelectValue placeholder={t('select_payment_method')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="upi">UPI Payment</SelectItem>
+                      <SelectItem value="upi">{t('upi_payment')}</SelectItem>
                       <SelectItem value="sbi">State Bank of India</SelectItem>
                       <SelectItem value="hdfc">HDFC Bank</SelectItem>
                       <SelectItem value="icici">ICICI Bank</SelectItem>
@@ -172,7 +172,7 @@ export const PaymentStep = ({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="upiId">UPI ID</Label>
+                  <Label htmlFor="upiId">{t('upi_id')}</Label>
                   <Input id="upiId" value={paymentData.upiId} onChange={e => updatePaymentData('upiId', e.target.value)} placeholder="yourname@upi" />
                 </div>
 
@@ -184,7 +184,7 @@ export const PaymentStep = ({
           <div className="flex gap-4 pt-6">
             <Button variant="outline" onClick={onBack} className="flex-1" disabled={isProcessing}>
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back
+              {t('back')}
             </Button>
             <Button onClick={handlePayment} className="flex-1" disabled={isProcessing}>
               {isProcessing ? t('processing') : `${t('pay_now')} ₹${plan.price + 10}`}

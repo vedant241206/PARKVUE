@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
 interface ImageUploadStepProps {
-  onSuccess: (numberPlate: string) => void;
+  onSuccess: (numberPlate: string, vehicleType?: string) => void;
   onBack: () => void;
 }
 export const ImageUploadStep = ({
@@ -15,6 +15,7 @@ export const ImageUploadStep = ({
 }: ImageUploadStepProps) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [detectedPlate, setDetectedPlate] = useState<string>('');
+  const [detectedVehicleType, setDetectedVehicleType] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
@@ -46,9 +47,10 @@ export const ImageUploadStep = ({
       console.log('Detection response:', data);
       if (data.success && data.numberPlate) {
         setDetectedPlate(data.numberPlate);
+        setDetectedVehicleType(data.vehicleType || '4wheeler');
         toast({
-          title: "Number Plate Detected!",
-          description: `Found: ${data.numberPlate}`
+          title: t('number_plate_detected'),
+          description: `${t('found')}: ${data.numberPlate}`
         });
       } else {
         throw new Error(data.error || 'Could not detect number plate');
@@ -56,11 +58,12 @@ export const ImageUploadStep = ({
     } catch (error) {
       console.error('OCR Error:', error);
       toast({
-        title: "Detection Failed",
-        description: error.message || "Could not detect number plate. You can enter it manually in the next step.",
+        title: t('detection_failed'),
+        description: error.message || t('detection_failed_desc'),
         variant: "destructive"
       });
       setDetectedPlate('');
+      setDetectedVehicleType('');
     } finally {
       setIsProcessing(false);
     }
@@ -113,18 +116,18 @@ export const ImageUploadStep = ({
   };
   const handleNext = () => {
     if (detectedPlate) {
-      onSuccess(detectedPlate);
+      onSuccess(detectedPlate, detectedVehicleType);
     } else if (uploadedImage) {
       // Allow to continue even without detection
       toast({
-        title: "No plate detected",
-        description: "You can enter the number plate manually in the next step"
+        title: t('no_plate_detected'),
+        description: t('manual_entry_desc')
       });
-      onSuccess('');
+      onSuccess('', detectedVehicleType);
     } else {
       toast({
-        title: "No Image Uploaded",
-        description: "Please upload a vehicle image first",
+        title: t('no_image_uploaded'),
+        description: t('upload_image_first'),
         variant: "destructive"
       });
     }
@@ -134,10 +137,10 @@ export const ImageUploadStep = ({
         <CardHeader className="text-center">
           <CardTitle className="text-2xl flex items-center justify-center gap-2">
             <Camera className="h-6 w-6" />
-            Upload Vehicle Image
+            {t('upload_vehicle_image')}
           </CardTitle>
           <p className="text-muted-foreground">
-            Upload a clear front view of your vehicle for automatic number plate detection
+            {t('upload_clear_image')}
           </p>
         </CardHeader>
         <CardContent className="p-6">
@@ -148,20 +151,20 @@ export const ImageUploadStep = ({
                   <img src={uploadedImage} alt="Uploaded vehicle" className="max-h-64 mx-auto rounded-lg" />
                   {isProcessing ? <div className="flex items-center justify-center gap-2 text-primary">
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      <span>Detecting number plate...</span>
+                      <span>{t('detecting_plate')}</span>
                     </div> : detectedPlate ? <div className="flex items-center justify-center gap-2 text-green-600">
                       <CheckCircle className="h-5 w-5" />
-                      <span>Number plate detected!</span>
+                      <span>{t('plate_detected')}</span>
                     </div> : <div className="text-muted-foreground">
-                      <p>Could not detect plate automatically</p>
-                      <p className="text-sm">You can enter it manually in the next step</p>
+                      <p>{t('could_not_detect')}</p>
+                      <p className="text-sm">{t('manual_entry_next')}</p>
                     </div>}
                 </div> : <div className="space-y-4">
                   <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
                   <div>
-                    <p className="font-medium">Drop your image here or click to upload</p>
+                    <p className="font-medium">{t('drop_image')}</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Supports JPG, PNG (Max 5MB)
+                      {t('supports_jpg_png')}
                     </p>
                   </div>
                 </div>}
@@ -169,13 +172,23 @@ export const ImageUploadStep = ({
             </div>
 
             {/* Detected Number Plate */}
-            {detectedPlate && <div className="bg-muted/50 p-4 rounded-lg">
-                <p className="text-sm text-muted-foreground mb-2">Detected Number Plate:</p>
-                <div className="text-white font-bold text-2xl py-3 px-4 text-center tracking-wider bg-[#0d98a5] rounded-2xl">
-                  {detectedPlate}
+            {detectedPlate && <div className="bg-muted/50 p-4 rounded-lg space-y-3">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">{t('detected_number_plate')}:</p>
+                  <div className="text-white font-bold text-2xl py-3 px-4 text-center tracking-wider bg-[#0d98a5] rounded-2xl">
+                    {detectedPlate}
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-2 text-center">
-                  You can edit this in the next step if needed
+                {detectedVehicleType && <div>
+                  <p className="text-sm text-muted-foreground mb-2">{t('detected_vehicle_type')}:</p>
+                  <div className="text-primary font-semibold text-lg py-2 px-4 text-center bg-primary/10 rounded-lg">
+                    {detectedVehicleType === '2wheeler' ? t('2wheeler') : 
+                     detectedVehicleType === '3wheeler' ? t('3wheeler') : 
+                     t('4wheeler')}
+                  </div>
+                </div>}
+                <p className="text-xs text-muted-foreground text-center">
+                  {t('edit_next_step')}
                 </p>
               </div>}
 
@@ -183,10 +196,10 @@ export const ImageUploadStep = ({
             <div className="flex gap-4 pt-4">
               <Button type="button" variant="outline" onClick={onBack} className="flex-1" disabled={isProcessing}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
+                {t('back')}
               </Button>
               <Button onClick={handleNext} className="flex-1" disabled={isProcessing || !uploadedImage}>
-                {isProcessing ? 'Processing...' : 'Next'}
+                {isProcessing ? t('processing') : t('next')}
               </Button>
             </div>
           </div>

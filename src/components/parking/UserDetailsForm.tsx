@@ -12,15 +12,16 @@ interface UserDetailsFormProps {
   onSubmit: (data: BookingFormData) => void;
   onBack: () => void;
   initialVehicleNumber?: string;
+  initialVehicleType?: string;
 }
 
-export const UserDetailsForm = ({ onSubmit, onBack, initialVehicleNumber }: UserDetailsFormProps) => {
+export const UserDetailsForm = ({ onSubmit, onBack, initialVehicleNumber, initialVehicleType }: UserDetailsFormProps) => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState<BookingFormData>({
     user_name: '',
     contact_number: '',
     email: '',
-    vehicle_type: '4wheeler',
+    vehicle_type: (initialVehicleType as '2wheeler' | '3wheeler' | '4wheeler') || '4wheeler',
     vehicle_number: initialVehicleNumber || ''
   });
 
@@ -147,9 +148,9 @@ export const UserDetailsForm = ({ onSubmit, onBack, initialVehicleNumber }: User
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="2wheeler">2-Wheeler (Bike/Scooter)</SelectItem>
-                  <SelectItem value="3wheeler">3-Wheeler (Auto/Rickshaw)</SelectItem>
-                  <SelectItem value="4wheeler">4-Wheeler (Car/SUV)</SelectItem>
+                  <SelectItem value="2wheeler">{t('2wheeler_desc')}</SelectItem>
+                  <SelectItem value="3wheeler">{t('3wheeler_desc')}</SelectItem>
+                  <SelectItem value="4wheeler">{t('4wheeler_desc')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -160,7 +161,7 @@ export const UserDetailsForm = ({ onSubmit, onBack, initialVehicleNumber }: User
                 {t('vehicle_number')}
               </Label>
               <p className="text-xs text-muted-foreground">
-                You'll be able to upload a vehicle image in the next step for automatic detection
+                {t('image_upload_hint')}
               </p>
               <Input
                 id="vehicle_number"

@@ -123,21 +123,14 @@ export const AuthenticationStep = ({
                   onClick={sendOtp}
                   disabled={isSending || !!otpHash}
                 >
-                  {isSending ? 'Sending...' : otpHash ? 'OTP Sent' : t('send_otp')}
+                  {isSending ? t('sending') : otpHash ? t('otp_sent') : t('send_otp')}
                 </Button>
               </div>
               <div className="bg-muted/50 p-3 rounded-lg">
                 <p className="text-sm text-muted-foreground mb-2">
-                  Code sent to: <span className="font-medium">{contactNumber}</span>
+                  {t('code_sent_to')}: <span className="font-medium">{contactNumber}</span>
                 </p>
-                {otpHash && (
-                  <div className="mb-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-                    <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
-                      🔧 Development Mode: Use OTP <span className="font-mono font-bold">123456</span>
-                    </p>
-                  </div>
-                )}
-                <Input value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder="Enter 6-digit OTP" maxLength={6} />
+                <Input value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder={t('enter_otp')} maxLength={6} />
               </div>
             </div>
 
@@ -147,7 +140,7 @@ export const AuthenticationStep = ({
             <div className="flex gap-4 pt-4">
               <Button type="button" variant="outline" onClick={onBack} className="flex-1" disabled={isVerifying}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
+                {t('back')}
               </Button>
               <Button onClick={handleVerify} className="flex-1" disabled={isVerifying || !phoneOtp}>
                 {isVerifying ? t('verifying') : t('authenticate')}

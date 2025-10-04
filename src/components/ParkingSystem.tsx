@@ -27,6 +27,7 @@ export const ParkingSystem = () => {
     vehicle_number: ''
   });
   const [detectedPlate, setDetectedPlate] = useState<string>('');
+  const [detectedVehicleType, setDetectedVehicleType] = useState<string>('');
   const [selectedPlan, setSelectedPlan] = useState<PlanOption | null>(null);
   const [paymentData, setPaymentData] = useState<PaymentFormData | null>(null);
   const [assignedSpot, setAssignedSpot] = useState<ParkingSpot | null>(null);
@@ -132,9 +133,14 @@ export const ParkingSystem = () => {
       fetchAvailableSpots(); // Refresh available spots
     }
   };
-  const handleImageUploadSuccess = (numberPlate: string) => {
+  const handleImageUploadSuccess = (numberPlate: string, vehicleType?: string) => {
     setDetectedPlate(numberPlate);
-    setFormData(prev => ({ ...prev, vehicle_number: numberPlate }));
+    setDetectedVehicleType(vehicleType || '');
+    setFormData(prev => ({ 
+      ...prev, 
+      vehicle_number: numberPlate,
+      vehicle_type: (vehicleType as '2wheeler' | '3wheeler' | '4wheeler') || prev.vehicle_type
+    }));
     setStep('form');
   };
 
@@ -303,7 +309,7 @@ export const ParkingSystem = () => {
 
         {step === 'imageUpload' && <ImageUploadStep onSuccess={handleImageUploadSuccess} onBack={() => setStep('entry')} />}
 
-        {step === 'form' && <UserDetailsForm onSubmit={handleFormSubmit} onBack={() => setStep('imageUpload')} initialVehicleNumber={detectedPlate} />}
+        {step === 'form' && <UserDetailsForm onSubmit={handleFormSubmit} onBack={() => setStep('imageUpload')} initialVehicleNumber={detectedPlate} initialVehicleType={detectedVehicleType} />}
 
         {step === 'auth' && <AuthenticationStep contactNumber={formData.contact_number} onSuccess={handleAuthSuccess} onBack={() => setStep('form')} />}
 

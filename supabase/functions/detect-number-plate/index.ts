@@ -25,7 +25,7 @@ serve(async (req) => {
 
     console.log('Detecting number plate using Gemini Vision...');
 
-    // Use Gemini Vision API for number plate detection
+    // Use Gemini Vision API for number plate and vehicle type detection
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -40,7 +40,7 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: 'Analyze this vehicle image and extract ONLY the license/number plate text. Return just the plate number in capital letters with no spaces, hyphens, or special characters. For Indian number plates, format should be like: DL01AB1234 or MH02CD5678. If you cannot detect a clear number plate, return "NOT_DETECTED".'
+                text: 'Analyze this vehicle image and extract: 1) The license/number plate text in capital letters with no spaces/hyphens (e.g., DL01AB1234), 2) The vehicle type (2wheeler for bike/scooter, 3wheeler for auto/rickshaw, 4wheeler for car/suv/truck). Return ONLY in this exact format: "NUMBERPLATE|VEHICLETYPE". Example: "MH12AB1234|4wheeler" or "DL01CD5678|2wheeler". If you cannot detect the plate or type, use "NOT_DETECTED" for that field.'
               },
               {
                 type: 'image_url',
@@ -66,15 +66,24 @@ serve(async (req) => {
     
     console.log('Detected text:', detectedText);
 
-    // Clean and validate the detected text
-    let numberPlate = detectedText.replace(/[^A-Z0-9]/g, '');
+    // Parse the response format: "NUMBERPLATE|VEHICLETYPE"
+    const parts = detectedText.split('|');
+    let numberPlate = parts[0]?.replace(/[^A-Z0-9]/g, '') || 'NOT_DETECTED';
+    let vehicleType = parts[1]?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+    
+    // Validate vehicle type
+    const validTypes = ['2wheeler', '3wheeler', '4wheeler'];
+    if (!validTypes.includes(vehicleType)) {
+      vehicleType = '4wheeler'; // Default to 4wheeler if detection fails
+    }
     
     if (numberPlate === 'NOT_DETECTED' || numberPlate.length < 6 || numberPlate.length > 15) {
       return new Response(
         JSON.stringify({ 
           success: false,
           error: 'Could not detect a valid number plate',
-          detectedText: numberPlate
+          detectedText: numberPlate,
+          vehicleType: vehicleType
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -86,7 +95,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        numberPlate: numberPlate
+        numberPlate: numberPlate,
+        vehicleType: vehicleType
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
