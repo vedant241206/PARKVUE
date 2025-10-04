@@ -47,7 +47,7 @@ export const AdminLogin = ({ onSuccess, onBack }: AdminLoginProps) => {
     } else {
       toast({
         title: "Access Denied",
-        description: "Invalid admin credentials. Please use @somaiya.edu email",
+        description: "Invalid admin credentials. Please use proper email",
         variant: "destructive"
       });
     }
