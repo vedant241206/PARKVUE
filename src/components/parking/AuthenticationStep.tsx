@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,10 @@ export const AuthenticationStep = ({
   const { toast } = useToast();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    sendOtp();
+  }, []);
+
   const sendOtp = async () => {
     setIsSending(true);
     try {
@@ -35,10 +39,6 @@ export const AuthenticationStep = ({
 
       if (data?.success) {
         setOtpHash(data.otpHash);
-        toast({
-          title: "OTP Sent",
-          description: `Verification code sent to ${contactNumber}`,
-        });
       } else {
         throw new Error(data?.error || 'Failed to send OTP');
       }
@@ -112,20 +112,10 @@ export const AuthenticationStep = ({
           <div className="space-y-6">
             {/* Phone Verification */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className="flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  {t('phone_verification')}
-                </Label>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={sendOtp}
-                  disabled={isSending || !!otpHash}
-                >
-                  {isSending ? t('sending') : otpHash ? t('otp_sent') : t('send_otp')}
-                </Button>
-              </div>
+              <Label className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                {t('phone_verification')}
+              </Label>
               <div className="bg-muted/50 p-3 rounded-lg">
                 <p className="text-sm text-muted-foreground mb-2">
                   {t('code_sent_to')}: <span className="font-medium">{contactNumber}</span>
