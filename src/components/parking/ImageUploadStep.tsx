@@ -198,6 +198,15 @@ export const ImageUploadStep = ({
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t('back')}
               </Button>
+              <Button 
+                type="button"
+                variant="secondary" 
+                onClick={() => onSuccess('', '')} 
+                className="flex-1" 
+                disabled={isProcessing}
+              >
+                {t('do_it_manually')}
+              </Button>
               <Button onClick={handleNext} className="flex-1" disabled={isProcessing || !uploadedImage}>
                 {isProcessing ? t('processing') : t('next')}
               </Button>

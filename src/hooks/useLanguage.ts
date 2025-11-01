@@ -108,7 +108,19 @@ const translations: Translations = {
     'choose_payment_method': 'Choose Payment Method',
     'upi_id': 'UPI ID',
     'select_payment_method': 'Select payment method',
-    'upi_payment': 'UPI Payment'
+    'upi_payment': 'UPI Payment',
+    'do_it_manually': 'Do it Manually',
+    'terms_required': 'Terms Required',
+    'accept_terms_message': 'Please accept the terms and conditions to proceed',
+    'i_agree_to': 'I agree to the',
+    'terms_and_conditions': 'Terms and Conditions',
+    'parking_terms_description': 'Please read and accept our terms and conditions',
+    'overtime_policy': 'Overtime Policy',
+    'overtime_policy_text': 'If your vehicle exceeds the allotted parking time, additional charges will be applied based on the hourly rate.',
+    'strict_action_notice': 'Strict Action Notice',
+    'strict_action_text': 'The organization reserves the right to take strict actions against vehicles that violate parking rules or exceed the parking duration without proper payment. This may include towing, fines, or other legal actions.',
+    'payment_terms': 'Payment Terms',
+    'payment_terms_text': 'All payments are non-refundable. By proceeding with the payment, you agree to pay the total amount including applicable service charges.'
   },
   hi: {
     'welcome': 'PARKVUE में आपका स्वागत है',
@@ -211,7 +223,19 @@ const translations: Translations = {
     'choose_payment_method': 'भुगतान विधि चुनें',
     'upi_id': 'UPI ID',
     'select_payment_method': 'भुगतान विधि चुनें',
-    'upi_payment': 'UPI भुगतान'
+    'upi_payment': 'UPI भुगतान',
+    'do_it_manually': 'मैन्युअली करें',
+    'terms_required': 'नियम आवश्यक',
+    'accept_terms_message': 'आगे बढ़ने के लिए कृपया नियम और शर्तें स्वीकार करें',
+    'i_agree_to': 'मैं सहमत हूँ',
+    'terms_and_conditions': 'नियम और शर्तें',
+    'parking_terms_description': 'कृपया हमारे नियम और शर्तें पढ़ें और स्वीकार करें',
+    'overtime_policy': 'ओवरटाइम नीति',
+    'overtime_policy_text': 'यदि आपका वाहन आवंटित पार्किंग समय से अधिक समय तक रहता है, तो प्रति घंटे की दर के आधार पर अतिरिक्त शुल्क लागू होगा।',
+    'strict_action_notice': 'सख्त कार्रवाई नोटिस',
+    'strict_action_text': 'संगठन उन वाहनों के खिलाफ सख्त कार्रवाई करने का अधिकार सुरक्षित रखता है जो पार्किंग नियमों का उल्लंघन करते हैं या उचित भुगतान के बिना पार्किंग अवधि से अधिक समय तक रहते हैं। इसमें टोइंग, जुर्माना या अन्य कानूनी कार्रवाई शामिल हो सकती है।',
+    'payment_terms': 'भुगतान की शर्तें',
+    'payment_terms_text': 'सभी भुगतान गैर-वापसी योग्य हैं। भुगतान के साथ आगे बढ़कर, आप लागू सेवा शुल्क सहित कुल राशि का भुगतान करने के लिए सहमत हैं।'
   },
   mr: {
     'welcome': 'PARKVUE मध्ये तुमचे स्वागत आहे',
@@ -314,7 +338,19 @@ const translations: Translations = {
     'choose_payment_method': 'पेमेंट पद्धत निवडा',
     'upi_id': 'UPI ID',
     'select_payment_method': 'पेमेंट पद्धत निवडा',
-    'upi_payment': 'UPI पेमेंट'
+    'upi_payment': 'UPI पेमेंट',
+    'do_it_manually': 'मॅन्युअली करा',
+    'terms_required': 'नियम आवश्यक',
+    'accept_terms_message': 'पुढे जाण्यासाठी कृपया नियम आणि अटी स्वीकारा',
+    'i_agree_to': 'मी सहमत आहे',
+    'terms_and_conditions': 'नियम आणि अटी',
+    'parking_terms_description': 'कृपया आमचे नियम आणि अटी वाचा आणि स्वीकारा',
+    'overtime_policy': 'ओव्हरटाईम धोरण',
+    'overtime_policy_text': 'जर तुमचे वाहन वाटप केलेल्या पार्किंग वेळेपेक्षा जास्त वेळ राहिले तर, तासाभराच्या दरानुसार अतिरिक्त शुल्क आकारले जाईल।',
+    'strict_action_notice': 'कठोर कार्यवाही नोटीस',
+    'strict_action_text': 'संस्था पार्किंग नियमांचे उल्लंघन करणार्‍या किंवा योग्य पेमेंटशिवाय पार्किंग कालावधीपेक्षा जास्त वेळ राहणार्‍या वाहनांविरूद्ध कठोर कार्यवाही करण्याचा अधिकार राखून ठेवते. यामध्ये टोइंग, दंड किंवा इतर कायदेशीर कार्यवाही समाविष्ट असू शकते.',
+    'payment_terms': 'पेमेंट अटी',
+    'payment_terms_text': 'सर्व पेमेंट परत न करण्यायोग्य आहेत. पेमेंट सुरू ठेवून, तुम्ही लागू सेवा शुल्कासह एकूण रक्कम भरण्यास सहमत आहात.'
   }
 };
 
