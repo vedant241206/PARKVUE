@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, LogOut, Phone, Car } from 'lucide-react';
+import { ArrowLeft, LogOut, Phone, Car, Upload, Camera, X } from 'lucide-react';
 import { GateAnimation } from './GateAnimation';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -15,12 +15,53 @@ interface ExitFlowProps {
 }
 
 export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
-  const [step, setStep] = useState<'verify' | 'confirm' | 'gate'>('verify');
+  const [step, setStep] = useState<'image' | 'verify' | 'confirm' | 'gate'>('image');
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [contactNumber, setContactNumber] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [booking, setBooking] = useState<Booking | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const handleImageUpload = useCallback(async (file: File) => {
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "File Too Large",
+        description: "Please upload an image smaller than 10MB",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setUploadedImage(e.target?.result as string);
+      toast({
+        title: "Image Uploaded",
+        description: "Vehicle image captured successfully"
+      });
+    };
+    reader.readAsDataURL(file);
+  }, [toast]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      handleImageUpload(file);
+    }
+  }, [handleImageUpload]);
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageUpload(file);
+    }
+  }, [handleImageUpload]);
 
   const handleVerify = async () => {
     if (!contactNumber || !vehicleNumber) {
@@ -115,6 +156,114 @@ export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
 
   return (
     <div className="max-w-2xl mx-auto">
+      {step === 'image' && (
+        <Card className="shadow-elevated">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl flex items-center justify-center gap-2">
+              <Camera className="h-6 w-6" />
+              Upload Vehicle Image
+            </CardTitle>
+            <p className="text-muted-foreground">
+              Take a photo of your vehicle for exit verification
+            </p>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              <div
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  isDragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'
+                } ${uploadedImage ? 'border-parking-available' : ''}`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+              >
+                {uploadedImage ? (
+                  <div className="space-y-4">
+                    <div className="relative inline-block">
+                      <img
+                        src={uploadedImage}
+                        alt="Uploaded vehicle"
+                        className="max-h-64 rounded-lg"
+                      />
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        className="absolute -top-2 -right-2"
+                        onClick={() => setUploadedImage(null)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Image uploaded successfully
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
+                    <div>
+                      <p className="text-lg font-medium mb-2">
+                        Drag & drop your vehicle image here
+                      </p>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        or click the button below to browse
+                      </p>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        Select Image
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onBack}
+                  className="flex-1"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Home
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (!uploadedImage) {
+                      toast({
+                        title: "Image Required",
+                        description: "Please upload a vehicle image first",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+                    setStep('verify');
+                  }}
+                  className="flex-1"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {step === 'verify' && (
         <Card className="shadow-elevated">
           <CardHeader className="text-center">
@@ -159,12 +308,12 @@ export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={onBack}
+                  onClick={() => setStep('image')}
                   className="flex-1"
                   disabled={isVerifying}
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Home
+                  Back
                 </Button>
                 <Button
                   type="submit"

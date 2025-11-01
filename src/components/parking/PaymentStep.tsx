@@ -5,7 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, CreditCard, Smartphone, Building2 } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ArrowLeft, CreditCard, Smartphone, Building2, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { PlanOption, PaymentFormData } from '@/types/parking';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -30,11 +32,21 @@ export const PaymentStep = ({
     netBankingBank: ''
   });
   const [isProcessing, setIsProcessing] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
   const handlePayment = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (isProcessing) return; // Prevent double clicks
+    
+    if (!termsAccepted) {
+      toast({
+        title: t('terms_required'),
+        description: t('accept_terms_message'),
+        variant: "destructive"
+      });
+      return;
+    }
     
     setIsProcessing(true);
     
@@ -181,14 +193,57 @@ export const PaymentStep = ({
             </TabsContent>
           </Tabs>
 
-          <div className="flex gap-4 pt-6">
-            <Button variant="outline" onClick={onBack} className="flex-1" disabled={isProcessing}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t('back')}
-            </Button>
-            <Button onClick={handlePayment} className="flex-1" disabled={isProcessing}>
-              {isProcessing ? t('processing') : `${t('pay_now')} ₹${plan.price + 10}`}
-            </Button>
+          <div className="pt-6 space-y-4">
+            <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg">
+              <Checkbox 
+                id="terms" 
+                checked={termsAccepted} 
+                onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+              />
+              <div className="flex-1 text-sm">
+                <label htmlFor="terms" className="cursor-pointer">
+                  {t('i_agree_to')}{' '}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="text-primary hover:underline inline-flex items-center gap-1">
+                        <FileText className="h-3 w-3" />
+                        {t('terms_and_conditions')}
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>{t('terms_and_conditions')}</DialogTitle>
+                        <DialogDescription>{t('parking_terms_description')}</DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 text-sm">
+                        <div>
+                          <h4 className="font-semibold mb-2">{t('overtime_policy')}</h4>
+                          <p className="text-muted-foreground">{t('overtime_policy_text')}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold mb-2">{t('strict_action_notice')}</h4>
+                          <p className="text-muted-foreground">{t('strict_action_text')}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold mb-2">{t('payment_terms')}</h4>
+                          <p className="text-muted-foreground">{t('payment_terms_text')}</p>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </label>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <Button variant="outline" onClick={onBack} className="flex-1" disabled={isProcessing}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {t('back')}
+              </Button>
+              <Button onClick={handlePayment} className="flex-1" disabled={isProcessing || !termsAccepted}>
+                {isProcessing ? t('processing') : `${t('pay_now')} ₹${plan.price + 10}`}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
