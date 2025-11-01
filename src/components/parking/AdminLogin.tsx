@@ -23,7 +23,7 @@ export const AdminLogin = ({ onSuccess, onBack }: AdminLoginProps) => {
     setIsLoading(true);
     
     // Check admin credentials and create session
-    if (email.endsWith('@knowbuild') && password === 'admin@DASH') {
+    if (email.endsWith('@somaiya.edu') && password === 'admin@DASH') {
       try {
         // For now, bypass the database function due to migration issue
         // Create a simple session token
@@ -47,7 +47,7 @@ export const AdminLogin = ({ onSuccess, onBack }: AdminLoginProps) => {
     } else {
       toast({
         title: "Access Denied",
-        description: "Invalid admin credentials. Please use proper email",
+        description: "Invalid admin credentials. Please use @somaiya.edu email",
         variant: "destructive"
       });
     }

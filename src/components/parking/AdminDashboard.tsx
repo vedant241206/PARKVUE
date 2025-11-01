@@ -6,9 +6,13 @@ import { ArrowLeft, Users, Car, BarChart3, Clock, Trash2, Download } from 'lucid
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import type { ParkingSpot, Booking } from '@/types/parking';
+
 interface AdminDashboardProps {
   onBack: () => void;
 }
+
+
+
 interface DashboardStats {
   totalSpots: number;
   occupiedSpots: number;
@@ -16,9 +20,8 @@ interface DashboardStats {
   activeBookings: number;
   totalRevenue: number;
 }
-export const AdminDashboard = ({
-  onBack
-}: AdminDashboardProps) => {
+
+export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [stats, setStats] = useState<DashboardStats>({
     totalSpots: 0,
     occupiedSpots: 0,
@@ -27,62 +30,78 @@ export const AdminDashboard = ({
     totalRevenue: 0
   });
   const [spots, setSpots] = useState<ParkingSpot[]>([]);
-  const [recentBookings, setRecentBookings] = useState<(Booking & {
-    parking_spots?: ParkingSpot;
-  })[]>([]);
-  const {
-    toast
-  } = useToast();
+  const [recentBookings, setRecentBookings] = useState<(Booking & { parking_spots?: ParkingSpot })[]>([]);
+  const { toast } = useToast();
+
   useEffect(() => {
     fetchDashboardData();
-
+    
     // Set up real-time subscription
-    const spotsSubscription = supabase.channel('parking-spots-changes').on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'parking_spots'
-    }, () => {
-      fetchDashboardData();
-    }).subscribe();
-    const bookingsSubscription = supabase.channel('bookings-changes').on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'bookings'
-    }, () => {
-      fetchDashboardData();
-    }).subscribe();
+    const spotsSubscription = supabase
+      .channel('parking-spots-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'parking_spots'
+        },
+        () => {
+          fetchDashboardData();
+        }
+      )
+      .subscribe();
+
+    const bookingsSubscription = supabase
+      .channel('bookings-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'bookings'
+        },
+        () => {
+          fetchDashboardData();
+        }
+      )
+      .subscribe();
+
     return () => {
       spotsSubscription.unsubscribe();
       bookingsSubscription.unsubscribe();
     };
   }, []);
+
   const fetchDashboardData = async () => {
     try {
       // Fetch parking spots
-      const {
-        data: spotsData
-      } = await supabase.from('parking_spots').select('*').order('spot_number');
+      const { data: spotsData } = await supabase
+        .from('parking_spots')
+        .select('*')
+        .order('spot_number');
 
       // Fetch ALL bookings
-      const {
-        data: bookingsData
-      } = await supabase.from('bookings').select(`
+      const { data: bookingsData } = await supabase
+        .from('bookings')
+        .select(`
           *,
           parking_spots (*)
-        `).order('created_at', {
-        ascending: false
-      });
+        `)
+        .order('created_at', { ascending: false});
 
       // Calculate stats
       if (spotsData) {
         setSpots(spotsData as ParkingSpot[]);
+        
         const totalSpots = spotsData.length;
         const occupiedSpots = spotsData.filter(spot => spot.is_occupied).length;
         const availableSpots = totalSpots - occupiedSpots;
-
+        
         // Calculate active bookings and revenue from the fetched data
         const activeBookings = bookingsData?.filter(booking => booking.status === 'active').length || 0;
         const totalRevenue = bookingsData?.reduce((sum, booking) => sum + (Number(booking.payment_amount) || 0), 0) || 0;
+
         setStats({
           totalSpots,
           occupiedSpots,
@@ -91,6 +110,7 @@ export const AdminDashboard = ({
           totalRevenue
         });
       }
+
       if (bookingsData) {
         setRecentBookings(bookingsData as any[]);
       }
@@ -98,8 +118,10 @@ export const AdminDashboard = ({
       console.error('Failed to fetch dashboard data:', error);
     }
   };
+
   const getSpotStatusColor = (spot: ParkingSpot) => {
     if (spot.is_occupied) return 'bg-parking-occupied text-white';
+    
     switch (spot.spot_type) {
       case 'vip':
         return 'bg-parking-vip text-white';
@@ -109,6 +131,7 @@ export const AdminDashboard = ({
         return 'bg-parking-available text-white';
     }
   };
+
   const getSpotTypeIcon = (type: string) => {
     switch (type) {
       case 'vip':
@@ -119,17 +142,18 @@ export const AdminDashboard = ({
         return '🚗';
     }
   };
+
   const clearAllBookings = async () => {
     if (!confirm('Are you sure you want to clear all bookings? This action cannot be undone.')) {
       return;
     }
+
     try {
       // First, make all parking spots available
-      const {
-        error: spotsError
-      } = await supabase.from('parking_spots').update({
-        is_occupied: false
-      }).neq('id', 0); // Update all records (neq 0 means all records)
+      const { error: spotsError } = await supabase
+        .from('parking_spots')
+        .update({ is_occupied: false })
+        .neq('id', 0); // Update all records (neq 0 means all records)
 
       if (spotsError) {
         console.error('Spots update error:', spotsError);
@@ -137,9 +161,10 @@ export const AdminDashboard = ({
       }
 
       // Then delete all bookings  
-      const {
-        error: bookingsError
-      } = await supabase.from('bookings').delete().neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+      const { error: bookingsError } = await supabase
+        .from('bookings')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
 
       if (bookingsError) {
         console.error('Bookings delete error:', bookingsError);
@@ -158,11 +183,9 @@ export const AdminDashboard = ({
       setRecentBookings([]);
 
       // Update spots state to show all as available
-      const updatedSpots = spots.map(spot => ({
-        ...spot,
-        is_occupied: false
-      }));
+      const updatedSpots = spots.map(spot => ({ ...spot, is_occupied: false }));
       setSpots(updatedSpots);
+
       toast({
         title: 'System Reset Complete',
         description: 'All bookings have been cleared and parking spots are now available'
@@ -181,17 +204,18 @@ export const AdminDashboard = ({
       });
     }
   };
+
   const downloadExcelData = async () => {
     try {
       // Fetch all bookings with parking spot details
-      const {
-        data: allBookings
-      } = await supabase.from('bookings').select(`
+      const { data: allBookings } = await supabase
+        .from('bookings')
+        .select(`
           *,
           parking_spots (*)
-        `).order('created_at', {
-        ascending: false
-      });
+        `)
+        .order('created_at', { ascending: false });
+
       if (!allBookings || allBookings.length === 0) {
         toast({
           title: "No Data",
@@ -212,13 +236,33 @@ export const AdminDashboard = ({
       };
 
       // Convert to CSV format
-      const headers = ['Name', 'Contact No', 'Email ID', 'Vehicle Type', 'Vehicle Number', 'Parking Type', 'Payment Method', 'Status'];
-      const csvContent = [headers.map(escapeCSV).join(','), ...allBookings.map(booking => [escapeCSV(booking.user_name), escapeCSV(booking.contact_number), escapeCSV(booking.email), escapeCSV(booking.vehicle_type.replace('wheeler', '-Wheeler')), escapeCSV(booking.vehicle_number), escapeCSV(booking.plan_type), escapeCSV(booking.payment_method), escapeCSV(booking.exit_time ? 'completed' : 'active')].join(','))].join('\n');
+      const headers = [
+        'Name',
+        'Contact No',
+        'Email ID',
+        'Vehicle Type',
+        'Vehicle Number',
+        'Parking Type',
+        'Payment Method',
+        'Status'
+      ];
+
+      const csvContent = [
+        headers.map(escapeCSV).join(','),
+        ...allBookings.map(booking => [
+          escapeCSV(booking.user_name),
+          escapeCSV(booking.contact_number),
+          escapeCSV(booking.email),
+          escapeCSV(booking.vehicle_type.replace('wheeler', '-Wheeler')),
+          escapeCSV(booking.vehicle_number),
+          escapeCSV(booking.plan_type),
+          escapeCSV(booking.payment_method),
+          escapeCSV(booking.exit_time ? 'completed' : 'active')
+        ].join(','))
+      ].join('\n');
 
       // Create and download file
-      const blob = new Blob([csvContent], {
-        type: 'text/csv'
-      });
+      const blob = new Blob([csvContent], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -227,6 +271,7 @@ export const AdminDashboard = ({
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+
       toast({
         title: "Download Complete",
         description: "Parking data has been downloaded successfully"
@@ -240,7 +285,9 @@ export const AdminDashboard = ({
       });
     }
   };
-  return <div className="max-w-7xl mx-auto">
+
+  return (
+    <div className="max-w-7xl mx-auto">
       {/* Header */}
       <Card className="shadow-elevated mb-8">
         <CardHeader>
@@ -290,7 +337,12 @@ export const AdminDashboard = ({
             <p className="text-sm text-muted-foreground">Available</p>
           </CardContent>
         </Card>
-        
+        <Card>
+          <CardContent className="p-6 text-center">
+            <div className="text-2xl font-bold text-primary">{stats.activeBookings}</div>
+            <p className="text-sm text-muted-foreground">Active Bookings</p>
+          </CardContent>
+        </Card>
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-parking-vip">₹{stats.totalRevenue}</div>
@@ -310,10 +362,16 @@ export const AdminDashboard = ({
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-5 gap-2">
-              {spots.map(spot => <div key={spot.id} className={`p-3 rounded-lg text-center text-xs font-medium ${getSpotStatusColor(spot)}`} title={`${spot.spot_number} - ${spot.spot_type} - ${spot.is_occupied ? 'Occupied' : 'Available'}`}>
+              {spots.map((spot) => (
+                <div
+                  key={spot.id}
+                  className={`p-3 rounded-lg text-center text-xs font-medium ${getSpotStatusColor(spot)}`}
+                  title={`${spot.spot_number} - ${spot.spot_type} - ${spot.is_occupied ? 'Occupied' : 'Available'}`}
+                >
                   <div className="mb-1">{getSpotTypeIcon(spot.spot_type)}</div>
                   <div>{spot.spot_number}</div>
-                </div>)}
+                </div>
+              ))}
             </div>
             <div className="flex gap-4 mt-4 text-xs">
               <div className="flex items-center gap-1">
@@ -346,7 +404,8 @@ export const AdminDashboard = ({
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentBookings.map(booking => <div key={booking.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+              {recentBookings.map((booking) => (
+                <div key={booking.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                       <Users className="h-4 w-4 text-primary" />
@@ -366,10 +425,12 @@ export const AdminDashboard = ({
                       ₹{booking.payment_amount}
                     </p>
                   </div>
-                </div>)}
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
       </div>
-    </div>;
+    </div>
+  );
 };
