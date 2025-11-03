@@ -139,11 +139,11 @@ const handler = async (req: Request): Promise<Response> => {
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     doc.text("Plan Cost", 20, yPos);
-    doc.text(`₹${plan.price}`, pageWidth - 20, yPos, { align: "right" });
+    doc.text(`Rs. ${plan.price}`, pageWidth - 20, yPos, { align: "right" });
     
     yPos += 6;
     doc.text("Service Charge", 20, yPos);
-    doc.text("₹10", pageWidth - 20, yPos, { align: "right" });
+    doc.text("Rs. 10", pageWidth - 20, yPos, { align: "right" });
     
     yPos += 8;
     doc.setLineWidth(0.5);
@@ -153,7 +153,7 @@ const handler = async (req: Request): Promise<Response> => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.text("Total Paid", 20, yPos);
-    doc.text(`₹${booking.payment_amount + 10}`, pageWidth - 20, yPos, { align: "right" });
+    doc.text(`Rs. ${booking.payment_amount + 10}`, pageWidth - 20, yPos, { align: "right" });
     
     yPos += 6;
     doc.setFontSize(9);
@@ -217,10 +217,19 @@ const handler = async (req: Request): Promise<Response> => {
       yPos += 5;
     });
     
-    // Footer
+    // Footer with Indian timezone
     doc.setTextColor(107, 114, 128);
     doc.setFontSize(8);
-    doc.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, pageWidth / 2, pageHeight - 15, { align: "center" });
+    const indianTime = new Date().toLocaleString('en-IN', { 
+      timeZone: 'Asia/Kolkata',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+    doc.text(`Generated on: ${indianTime}`, pageWidth / 2, pageHeight - 15, { align: "center" });
     doc.setFont("helvetica", "bold");
     doc.text("PARKVUE - Smart Parking Solution", pageWidth / 2, pageHeight - 10, { align: "center" });
     

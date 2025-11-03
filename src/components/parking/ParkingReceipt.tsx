@@ -5,7 +5,7 @@ import { CheckCircle, MapPin, Clock, Car, CreditCard, Loader2 } from 'lucide-rea
 import type { Booking, ParkingSpot, PlanOption } from '@/types/parking';
 import { useLanguage } from '@/hooks/useLanguage';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { toast } from 'sonner';
 
 interface ParkingReceiptProps {
@@ -19,9 +19,14 @@ export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptP
   const { t } = useLanguage();
   const entryTime = new Date(booking.entry_time);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const emailSentRef = useRef(false);
 
   useEffect(() => {
+    // Prevent duplicate email sends
+    if (emailSentRef.current) return;
+    
     const sendReceiptEmail = async () => {
+      emailSentRef.current = true;
       setIsSendingEmail(true);
       try {
         const { data, error } = await supabase.functions.invoke('send-receipt-email', {
@@ -39,13 +44,14 @@ export const ParkingReceipt = ({ booking, spot, plan, onClose }: ParkingReceiptP
       } catch (error: any) {
         console.error("Error sending receipt email:", error);
         toast.error("Failed to send receipt email. Please try again.");
+        emailSentRef.current = false; // Allow retry on error
       } finally {
         setIsSendingEmail(false);
       }
     };
 
     sendReceiptEmail();
-  }, [booking, spot, plan]);
+  }, []); // Empty deps - only run once on mount
 
   return (
     <div className="max-w-2xl mx-auto">
