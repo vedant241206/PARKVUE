@@ -26,156 +26,238 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Generating PDF receipt for:", recipientEmail);
 
-    // Create PDF
+    // Create decorative PDF
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     
-    // Header
-    doc.setFontSize(24);
+    // Header with gradient effect (simulated with rectangles)
+    doc.setFillColor(16, 185, 129); // emerald-500
+    doc.rect(0, 0, pageWidth, 35, 'F');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(28);
     doc.setFont("helvetica", "bold");
-    doc.text("PARKING RECEIPT", pageWidth / 2, 20, { align: "center" });
+    doc.text("PARKVUE", pageWidth / 2, 15, { align: "center" });
+    
+    doc.setFontSize(16);
+    doc.text("Booking Confirmed!", pageWidth / 2, 25, { align: "center" });
     
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text("Smart Parking System", pageWidth / 2, 28, { align: "center" });
+    doc.text("Your parking spot has been reserved", pageWidth / 2, 31, { align: "center" });
     
-    // Booking Details
-    let yPos = 45;
-    doc.setFontSize(14);
+    // Reset text color
+    doc.setTextColor(0, 0, 0);
+    
+    // Parking Location Box
+    let yPos = 50;
+    doc.setFillColor(239, 246, 255); // blue-50
+    doc.setDrawColor(59, 130, 246); // blue-500
+    doc.setLineWidth(1);
+    doc.rect(20, yPos, pageWidth - 40, 35, 'FD');
+    
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Your Parking Location", pageWidth / 2, yPos + 8, { align: "center" });
+    
+    doc.setTextColor(29, 78, 216); // blue-700
+    doc.setFontSize(36);
+    doc.text(spot.spot_number, pageWidth / 2, yPos + 22, { align: "center" });
+    
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Floor ${spot.floor_level} • Section ${spot.section}`, pageWidth / 2, yPos + 30, { align: "center" });
+    
+    doc.setTextColor(0, 0, 0);
+    
+    // Booking Details Section
+    yPos = 95;
+    doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("Booking Details", 20, yPos);
     
-    yPos += 10;
+    yPos += 8;
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`Booking ID: ${booking.id}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Date: ${new Date(booking.created_at).toLocaleDateString()}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Status: ${booking.status.toUpperCase()}`, 20, yPos);
+    doc.setTextColor(107, 114, 128);
+    doc.text("Booking ID", 20, yPos);
+    doc.text("Vehicle Number", 110, yPos);
     
-    // Parking Location
-    yPos += 15;
-    doc.setFontSize(14);
+    yPos += 5;
+    doc.setTextColor(0, 0, 0);
     doc.setFont("helvetica", "bold");
-    doc.text("Parking Location", 20, yPos);
+    doc.text(booking.id.slice(0, 8).toUpperCase(), 20, yPos);
+    doc.text(booking.vehicle_number, 110, yPos);
     
-    yPos += 10;
-    doc.setFontSize(10);
+    yPos += 8;
     doc.setFont("helvetica", "normal");
-    doc.text(`Spot Number: ${spot.spot_number}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Floor: ${spot.floor_level}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Section: ${spot.section}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Type: ${plan.name}`, 20, yPos);
+    doc.setTextColor(107, 114, 128);
+    doc.text("Vehicle Type", 20, yPos);
+    doc.text("Plan Type", 110, yPos);
     
-    // Timing
-    yPos += 15;
-    doc.setFontSize(14);
+    yPos += 5;
+    doc.setTextColor(0, 0, 0);
     doc.setFont("helvetica", "bold");
-    doc.text("Timing Details", 20, yPos);
+    doc.text(booking.vehicle_type.replace('wheeler', '-Wheeler'), 20, yPos);
+    doc.text(plan.name, 110, yPos);
     
-    yPos += 10;
+    // Timing Information
+    yPos += 12;
+    doc.setFontSize(12);
+    doc.text("Timing Information", 20, yPos);
+    
+    yPos += 8;
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`Entry Time: ${new Date(booking.entry_time).toLocaleString()}`, 20, yPos);
-    if (booking.exit_time) {
-      yPos += 7;
-      doc.text(`Exit Time: ${new Date(booking.exit_time).toLocaleString()}`, 20, yPos);
-    }
+    doc.setTextColor(107, 114, 128);
+    doc.text("Entry Time", 20, yPos);
+    doc.text("Status", 110, yPos);
+    
+    yPos += 5;
+    doc.setTextColor(0, 0, 0);
+    doc.setFont("helvetica", "bold");
+    const entryTime = new Date(booking.entry_time);
+    doc.text(entryTime.toLocaleString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }), 20, yPos);
+    doc.setTextColor(16, 185, 129);
+    doc.text("Active", 110, yPos);
+    doc.setTextColor(0, 0, 0);
     
     // Payment Summary
-    yPos += 15;
-    doc.setFontSize(14);
+    yPos += 12;
+    doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("Payment Summary", 20, yPos);
     
-    yPos += 10;
+    yPos += 8;
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`Plan: ${plan.name}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Amount: ₹${booking.payment_amount}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Payment Method: ${booking.payment_method.toUpperCase()}`, 20, yPos);
+    doc.text("Plan Cost", 20, yPos);
+    doc.text(`₹${plan.price}`, pageWidth - 20, yPos, { align: "right" });
+    
+    yPos += 6;
+    doc.text("Service Charge", 20, yPos);
+    doc.text("₹10", pageWidth - 20, yPos, { align: "right" });
+    
+    yPos += 8;
+    doc.setLineWidth(0.5);
+    doc.line(20, yPos, pageWidth - 20, yPos);
+    
+    yPos += 6;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Total Paid", 20, yPos);
+    doc.text(`₹${booking.payment_amount + 10}`, pageWidth - 20, yPos, { align: "right" });
+    
+    yPos += 6;
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(107, 114, 128);
+    doc.text(`Payment Method: ${booking.payment_method === 'card' ? 'Card Payment' : 'Online Payment'}`, 20, yPos);
+    doc.setTextColor(0, 0, 0);
     
     // Customer Information
-    yPos += 15;
-    doc.setFontSize(14);
+    yPos += 12;
+    doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("Customer Information", 20, yPos);
     
-    yPos += 10;
+    yPos += 8;
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`Name: ${booking.user_name}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Contact: ${booking.contact_number}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Email: ${booking.email}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Vehicle: ${booking.vehicle_number}`, 20, yPos);
-    yPos += 7;
-    doc.text(`Vehicle Type: ${booking.vehicle_type}`, 20, yPos);
+    doc.setTextColor(107, 114, 128);
+    doc.text("Name:", 20, yPos);
+    doc.setTextColor(0, 0, 0);
+    doc.text(booking.user_name, 50, yPos);
     
-    // Instructions
-    yPos += 15;
-    doc.setFontSize(14);
+    yPos += 6;
+    doc.setTextColor(107, 114, 128);
+    doc.text("Contact:", 20, yPos);
+    doc.setTextColor(0, 0, 0);
+    doc.text(booking.contact_number, 50, yPos);
+    
+    yPos += 6;
+    doc.setTextColor(107, 114, 128);
+    doc.text("Email:", 20, yPos);
+    doc.setTextColor(0, 0, 0);
+    doc.text(booking.email, 50, yPos);
+    
+    // Instructions Box
+    yPos += 12;
+    doc.setFillColor(239, 246, 255);
+    doc.setDrawColor(59, 130, 246);
+    doc.setLineWidth(1);
+    doc.rect(20, yPos, pageWidth - 40, 35, 'FD');
+    
+    yPos += 7;
+    doc.setTextColor(30, 64, 175); // blue-800
+    doc.setFontSize(11);
     doc.setFont("helvetica", "bold");
-    doc.text("Important Instructions", 20, yPos);
+    doc.text("Important Instructions:", 25, yPos);
     
-    yPos += 10;
+    yPos += 6;
     doc.setFontSize(9);
     doc.setFont("helvetica", "normal");
+    doc.setTextColor(30, 58, 138); // blue-900
     const instructions = [
-      "• Please keep this receipt for your records",
-      "• Present this receipt at the exit gate",
-      "• Follow all parking regulations",
-      "• Park only in the designated spot",
-      "• Contact support for any issues"
+      "• Keep this receipt with you at all times",
+      `• Note your parking location: ${spot.spot_number}`,
+      "• For exit, use the same contact details for verification",
+      "• Contact support if you need assistance"
     ];
     
     instructions.forEach((instruction) => {
-      doc.text(instruction, 20, yPos);
-      yPos += 6;
+      doc.text(instruction, 25, yPos);
+      yPos += 5;
     });
     
     // Footer
-    yPos += 10;
+    doc.setTextColor(107, 114, 128);
     doc.setFontSize(8);
-    doc.text("Thank you for using our parking system!", pageWidth / 2, yPos, { align: "center" });
-    yPos += 5;
-    doc.text("For support: support@parking.com", pageWidth / 2, yPos, { align: "center" });
+    doc.text(`Generated on: ${new Date().toLocaleString('en-IN')}`, pageWidth / 2, pageHeight - 15, { align: "center" });
+    doc.setFont("helvetica", "bold");
+    doc.text("PARKVUE - Smart Parking Solution", pageWidth / 2, pageHeight - 10, { align: "center" });
     
     // Convert PDF to base64
     const pdfBase64 = doc.output('datauristring').split(',')[1];
 
     console.log("Sending email with PDF attachment...");
 
-    // Send email via Resend
+    // Send simple thank you email with PDF
     const emailResponse = await resend.emails.send({
       from: "Smart Parking <onboarding@resend.dev>",
       to: [recipientEmail],
-      subject: `Parking Receipt - ${booking.id}`,
+      subject: `Parking Receipt - Booking Confirmed`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h1 style="color: #333; text-align: center;">Parking Receipt</h1>
-          <p>Dear ${booking.user_name},</p>
-          <p>Thank you for using our Smart Parking System. Please find your parking receipt attached as a PDF.</p>
-          
-          <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h2 style="margin-top: 0; color: #666;">Booking Summary</h2>
-            <p><strong>Booking ID:</strong> ${booking.id}</p>
-            <p><strong>Spot Number:</strong> ${spot.spot_number}</p>
-            <p><strong>Amount Paid:</strong> ₹${booking.payment_amount}</p>
-            <p><strong>Entry Time:</strong> ${new Date(booking.entry_time).toLocaleString()}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h1 style="color: #10b981; text-align: center;">Thank You!</h1>
+          <p style="font-size: 16px; color: #333;">Dear ${booking.user_name},</p>
+          <p style="font-size: 14px; color: #666;">
+            Thank you for choosing our Smart Parking System. Your booking has been confirmed successfully.
+          </p>
+          <p style="font-size: 14px; color: #666;">
+            Please find your detailed parking receipt attached to this email.
+          </p>
+          <div style="background: #f0fdf4; border: 2px solid #10b981; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <p style="font-size: 18px; font-weight: bold; color: #059669; margin: 0;">
+              Parking Spot: ${spot.spot_number}
+            </p>
           </div>
-          
-          <p>If you have any questions or concerns, please don't hesitate to contact us.</p>
-          <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
-            This is an automated email. Please do not reply.
+          <p style="font-size: 14px; color: #666;">
+            We wish you a pleasant parking experience!
+          </p>
+          <p style="font-size: 14px; color: #666; margin-top: 30px;">
+            Best regards,<br>
+            <strong>PARKVUE Team</strong>
+          </p>
+          <p style="color: #999; font-size: 11px; margin-top: 30px; text-align: center; border-top: 1px solid #ddd; padding-top: 15px;">
+            This is an automated message. Please do not reply to this email.
           </p>
         </div>
       `,
