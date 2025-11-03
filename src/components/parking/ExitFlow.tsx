@@ -239,7 +239,15 @@ export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
                   className="flex-1"
                 >
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Home
+                  Back
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setStep('verify')}
+                  className="flex-1"
+                >
+                  Do it Manually
                 </Button>
                 <Button
                   type="button"
