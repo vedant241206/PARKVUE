@@ -156,7 +156,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Send email via Resend
     const emailResponse = await resend.emails.send({
-      from: "Smart Parking <vedantpawar434@gmail.com>",
+      from: "Smart Parking <onboarding@resend.dev>",
       to: [recipientEmail],
       subject: `Parking Receipt - ${booking.id}`,
       html: `
