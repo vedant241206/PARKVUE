@@ -21,9 +21,48 @@ export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
   const [contactNumber, setContactNumber] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [detectedPlate, setDetectedPlate] = useState<string>('');
+  const [detectedVehicleType, setDetectedVehicleType] = useState<string>('');
   const [booking, setBooking] = useState<Booking | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const extractNumberPlate = async (imageUrl: string) => {
+    setIsScanning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('detect-number-plate', {
+        body: { imageBase64: imageUrl }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        setDetectedPlate(data.numberPlate);
+        setDetectedVehicleType(data.vehicleType);
+        setVehicleNumber(data.numberPlate);
+        toast({
+          title: "Detection Successful",
+          description: `Detected: ${data.numberPlate} (${data.vehicleType})`,
+        });
+      } else {
+        toast({
+          title: "Detection Failed",
+          description: data?.error || "Could not detect number plate",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error detecting number plate:', error);
+      toast({
+        title: "Detection Error",
+        description: "Failed to scan the image",
+        variant: "destructive"
+      });
+    } finally {
+      setIsScanning(false);
+    }
+  };
 
   const handleImageUpload = useCallback(async (file: File) => {
     if (file.size > 10 * 1024 * 1024) {
@@ -36,12 +75,14 @@ export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
     }
 
     const reader = new FileReader();
-    reader.onload = (e) => {
-      setUploadedImage(e.target?.result as string);
+    reader.onload = async (e) => {
+      const imageData = e.target?.result as string;
+      setUploadedImage(imageData);
       toast({
         title: "Image Uploaded",
-        description: "Vehicle image captured successfully"
+        description: "Scanning vehicle image..."
       });
+      await extractNumberPlate(imageData);
     };
     reader.readAsDataURL(file);
   }, [toast]);
@@ -192,14 +233,31 @@ export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
                         size="icon"
                         variant="destructive"
                         className="absolute -top-2 -right-2"
-                        onClick={() => setUploadedImage(null)}
+                        onClick={() => {
+                          setUploadedImage(null);
+                          setDetectedPlate('');
+                          setDetectedVehicleType('');
+                          setVehicleNumber('');
+                        }}
                       >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      Image uploaded successfully
-                    </p>
+                    {isScanning ? (
+                      <p className="text-sm text-muted-foreground">
+                        Scanning image...
+                      </p>
+                    ) : detectedPlate ? (
+                      <div className="bg-parking-available/10 p-3 rounded-lg border border-parking-available/20">
+                        <p className="text-parking-available font-semibold">✓ Detection Successful</p>
+                        <p className="text-sm mt-1">Number Plate: <span className="font-mono font-bold">{detectedPlate}</span></p>
+                        <p className="text-sm">Vehicle Type: <span className="font-medium">{detectedVehicleType}</span></p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Image uploaded - Detection failed
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -263,8 +321,9 @@ export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
                     setStep('verify');
                   }}
                   className="flex-1"
+                  disabled={isScanning}
                 >
-                  Next
+                  {isScanning ? 'Scanning...' : 'Next'}
                 </Button>
               </div>
             </div>
@@ -280,8 +339,14 @@ export const ExitFlow = ({ onComplete, onBack }: ExitFlowProps) => {
               Exit Parking
             </CardTitle>
             <p className="text-muted-foreground">
-              Please verify your details to exit the parking area
+              {detectedPlate ? 'Confirm the detected details below' : 'Please verify your details to exit the parking area'}
             </p>
+            {detectedPlate && (
+              <div className="bg-parking-available/10 p-3 rounded-lg border border-parking-available/20 mt-2">
+                <p className="text-parking-available font-semibold text-sm">✓ Detected from image</p>
+                <p className="text-xs mt-1">Number Plate: <span className="font-mono font-bold">{detectedPlate}</span></p>
+              </div>
+            )}
           </CardHeader>
           <CardContent className="p-6">
             <form onSubmit={(e) => { e.preventDefault(); handleVerify(); }} className="space-y-6">
